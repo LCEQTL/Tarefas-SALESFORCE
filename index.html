@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Backlog Tarefas · Carteiras PI</title>
+<style>
+:root{
+  --navy:#0b2e59; --navy2:#14427d; --ink:#1d2433; --mute:#667085; --line:#e4e7ec; --bg:#f4f6f9; --card:#fff;
+  --g:#3ccf91; --y:#e3d23a; --r:#ef6236; --fe:#6b4de6; --blue:#2e6bd6;
+  --rad:12px; --sh:0 1px 2px rgba(16,24,40,.06),0 1px 3px rgba(16,24,40,.08);
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 "Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+/* ---- login ---- */
+#login{min-height:100vh;display:grid;place-items:center;background:linear-gradient(135deg,#0b2e59,#1c5aa6)}
+#login form{background:#fff;padding:32px 28px;border-radius:16px;width:min(360px,92vw);box-shadow:0 20px 50px rgba(0,0,0,.25)}
+#login h1{margin:0 0 4px;font-size:20px;color:var(--navy)}
+#login p{margin:0 0 18px;color:var(--mute);font-size:13px}
+#login input{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;margin-bottom:12px;font-size:15px}
+#login button{width:100%;padding:11px;border:0;border-radius:10px;background:var(--navy);color:#fff;font-weight:600}
+#login .err{color:#c0392b;font-size:13px;min-height:18px;margin-top:8px}
+/* ---- header ---- */
+header{background:var(--navy);color:#fff;padding:14px 22px 0;position:sticky;top:0;z-index:20;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.hrow{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap}
+header h1{margin:0;font-size:19px;letter-spacing:.2px}
+header .sub{font-size:12px;opacity:.75}
+header .meta{font-size:12px;opacity:.85;text-align:right}
+nav{display:flex;gap:4px;margin-top:12px;overflow-x:auto}
+nav button{background:transparent;border:0;color:#cfe0ff;padding:9px 16px;border-radius:10px 10px 0 0;font-weight:600;white-space:nowrap}
+nav button.on{background:var(--bg);color:var(--navy)}
+main{padding:18px 22px 60px;max-width:1500px;margin:0 auto}
+/* ---- cards / kpis ---- */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:16px}
+.kpi{background:var(--card);border-radius:var(--rad);padding:12px 14px;box-shadow:var(--sh);border-left:4px solid var(--navy)}
+.kpi b{display:block;font-size:12px;color:var(--navy)}
+.kpi .v{font-size:28px;font-weight:700;color:var(--navy);line-height:1.15}
+.kpi small{color:var(--mute);font-size:12px}
+.panel{background:var(--card);border-radius:var(--rad);box-shadow:var(--sh);padding:16px;margin-bottom:16px}
+.panel h3{margin:0 0 12px;font-size:15px;color:var(--navy)}
+.panel h3 small{font-weight:400;color:var(--mute);font-size:12px;margin-left:6px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:900px){.grid2{grid-template-columns:1fr}}
+/* ---- carteiras ---- */
+.carts{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px;margin-bottom:14px}
+.cart{background:var(--card);border:2px solid transparent;border-radius:var(--rad);padding:11px 13px;box-shadow:var(--sh);text-align:left;transition:.15s}
+.cart:hover{border-color:#c9d6ea}
+.cart.on{border-color:var(--navy);background:#f3f7ff}
+.cart .nm{font-weight:700;color:var(--navy);font-size:14px;display:flex;justify-content:space-between;gap:6px}
+.cart .ow{font-size:11.5px;color:var(--mute);margin:2px 0 7px;min-height:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cart .foot{display:flex;justify-content:space-between;font-size:11.5px;color:var(--mute);margin-top:6px}
+.sla{display:flex;height:8px;border-radius:4px;overflow:hidden;background:#eef1f5}
+.sla i{display:block;height:100%}
+.c1{background:var(--g)}.c2{background:var(--y)}.c3{background:var(--r)}.cF{background:var(--fe)}
+/* ---- filtros ---- */
+.filters{display:flex;flex-wrap:wrap;gap:8px;align-items:center;background:var(--card);padding:10px 12px;border-radius:var(--rad);box-shadow:var(--sh);margin-bottom:14px;position:sticky;top:var(--hh,100px);z-index:10}
+.filters input[type=search]{flex:1 1 240px;padding:8px 11px;border:1px solid var(--line);border-radius:9px;min-width:180px}
+.chip{border:1px solid var(--line);background:#fff;padding:5px 11px;border-radius:999px;font-size:12.5px;display:inline-flex;align-items:center;gap:6px}
+.chip.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+.chip .dot{width:9px;height:9px;border-radius:50%}
+.btn{border:1px solid var(--line);background:#fff;padding:6px 12px;border-radius:9px;font-size:12.5px}
+.btn:hover{background:#f2f4f7}
+.btn.pri{background:var(--navy);color:#fff;border-color:var(--navy)}
+.btn.pri:hover{background:var(--navy2)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.count{color:var(--mute);font-size:12.5px;margin-left:auto}
+/* ---- árvore ---- */
+details.l1{background:var(--card);border-radius:var(--rad);box-shadow:var(--sh);margin-bottom:12px;overflow:hidden}
+details.l1>summary{list-style:none;padding:12px 16px;display:flex;align-items:center;gap:10px;cursor:pointer;font-weight:700;color:var(--navy);font-size:15px;border-bottom:1px solid transparent}
+details.l1[open]>summary{border-bottom-color:var(--line)}
+details.l1.fe>summary{background:linear-gradient(90deg,#efeaff,#fff);color:#4a2fc2}
+summary::-webkit-details-marker{display:none}
+summary .car{transition:transform .15s;display:inline-block;width:12px;color:var(--mute)}
+details[open]>summary .car{transform:rotate(90deg)}
+summary .n{background:#eef2f8;color:var(--navy);border-radius:999px;padding:1px 9px;font-size:12px;font-weight:700}
+summary .sla{width:140px;margin-left:auto}
+.l1body{padding:6px 10px 10px}
+details.l2{border-bottom:1px solid #f0f2f5}
+details.l2:last-child{border-bottom:0}
+details.l2>summary{list-style:none;padding:9px 8px;display:flex;align-items:center;gap:9px;cursor:pointer;font-size:13.5px}
+details.l2>summary:hover{background:#f8fafc}
+details.l2>summary .t{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
+.mini{font-size:11.5px;color:var(--mute);white-space:nowrap}
+.tasks{padding:4px 8px 12px 30px;display:grid;gap:8px}
+.task{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:#fcfdff;display:grid;grid-template-columns:auto 1fr;gap:10px}
+.task.done{opacity:.55}
+.task .chk{padding-top:2px}
+.task .chk input{width:17px;height:17px;accent-color:var(--navy)}
+.trow{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;font-size:12.5px}
+.nota{font-family:ui-monospace,Consolas,monospace;font-weight:700;background:var(--navy);color:#fff;border-radius:6px;padding:2px 8px;border:0;font-size:12.5px}
+.nota:hover{background:var(--navy2)}
+.tag{background:#eef2f8;color:#344054;border-radius:6px;padding:1px 7px;font-size:12px}
+.tag.cart-t{background:#e6efff;color:#1b4fa8;font-weight:600}
+.tag.st{background:#fff4e5;color:#a15c00}
+.tag.hi{background:#fde8e8;color:#b42318;font-weight:700}
+.tag.fe{background:#efeaff;color:#4a2fc2;font-weight:700}
+.dias{border-radius:6px;padding:1px 7px;font-weight:700;font-size:12px;color:#1d2433}
+.desc{margin-top:7px;font-size:13px;white-space:pre-wrap;color:#344054;max-height:4.4em;overflow:hidden;position:relative}
+.desc.open{max-height:none}
+.more{border:0;background:none;color:var(--blue);font-size:12px;padding:2px 0}
+.tsub{font-size:12px;color:var(--mute);margin-top:4px}
+.empty{padding:40px;text-align:center;color:var(--mute)}
+/* ---- gráficos ---- */
+.bars .row{display:grid;grid-template-columns:170px 1fr 48px;gap:10px;align-items:center;margin:6px 0;font-size:12.5px}
+.bars .lbl{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:right;color:#344054}
+.bars .track{display:flex;height:20px;border-radius:5px;overflow:hidden;background:#f1f3f6}
+.bars .track i{display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-style:normal;font-weight:700;min-width:0}
+.bars .track i.c2{color:#3b3a10}
+.bars .tot{font-weight:700;color:var(--navy)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--mute);margin-bottom:8px}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+.legend i{width:10px;height:10px;border-radius:50%;display:inline-block}
+.heat{overflow-x:auto}
+.heat table{border-collapse:separate;border-spacing:3px;font-size:12px}
+.heat th{font-weight:600;color:var(--mute);padding:3px 6px;white-space:nowrap}
+.heat th.rl{text-align:right;color:#344054;max-width:220px;overflow:hidden;text-overflow:ellipsis}
+.heat td{min-width:46px;height:32px;text-align:center;border-radius:6px;font-weight:700;cursor:pointer}
+.heat td.z{cursor:default;color:#c0c6d0;font-weight:400}
+.heat td:not(.z):hover{outline:2px solid var(--navy)}
+.heat td.tt{background:#eef2f8!important;color:var(--navy)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden;margin-left:8px;vertical-align:middle}
+.seg button{border:0;background:#fff;padding:4px 10px;font-size:12px}
+.seg button.on{background:var(--navy);color:#fff}
+svg text{font-family:inherit}
+table.tb{width:100%;border-collapse:collapse;font-size:13px}
+table.tb th,table.tb td{padding:7px 9px;border-bottom:1px solid var(--line);text-align:left}
+table.tb th{color:var(--mute);font-weight:600;font-size:12px}
+table.tb td.num,table.tb th.num{text-align:right}
+.up{color:#b42318;font-weight:700}.down{color:#067647;font-weight:700}
+.idlist{display:flex;flex-wrap:wrap;gap:5px;max-height:180px;overflow:auto}
+/* ---- admin ---- */
+.form label{display:block;font-size:12px;font-weight:600;color:#344054;margin:10px 0 4px}
+.form input[type=text],.form input[type=password],.form input[type=date],.form textarea{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:9px;background:#fff}
+.form textarea{min-height:90px;font-family:ui-monospace,Consolas,monospace;font-size:12.5px}
+.drop{border:2px dashed #b9c6db;border-radius:12px;padding:26px;text-align:center;color:var(--mute);background:#fafcff;cursor:pointer}
+.drop.over{border-color:var(--navy);background:#eef4ff}
+.log{background:#0f172a;color:#d1e2ff;border-radius:10px;padding:10px 12px;font:12px/1.5 ui-monospace,Consolas,monospace;white-space:pre-wrap;max-height:220px;overflow:auto;margin-top:10px}
+.note{font-size:12px;color:var(--mute)}
+.warn{background:#fff7e6;border:1px solid #ffd591;color:#874d00;padding:8px 10px;border-radius:9px;font-size:12.5px;margin-top:8px}
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#101828;color:#fff;padding:9px 16px;border-radius:10px;font-size:13px;z-index:99;opacity:0;transition:.2s;pointer-events:none}
+.toast.on{opacity:1}
+</style>
+</head>
+<body>
+
+<section id="login">
+  <form id="loginForm" autocomplete="on">
+    <h1>Backlog · Carteiras PI</h1>
+    <p>Dados criptografados. Informe a palavra-chave para abrir.</p>
+    <input type="password" id="pw" placeholder="Palavra-chave" autocomplete="current-password" autofocus>
+    <button type="submit" id="loginBtn">Entrar</button>
+    <div class="err" id="loginErr"></div>
+  </form>
+</section>
+
+<div id="app" class="hidden">
+  <header>
+    <div class="hrow">
+      <div>
+        <h1>Backlog · Tarefas Pendentes por Carteira</h1>
+        <div class="sub" id="hdrSub"></div>
+      </div>
+      <div class="meta" id="hdrMeta"></div>
+    </div>
+    <nav id="tabs">
+      <button data-t="tarefas" class="on">Tarefas</button>
+      <button data-t="analise">Análise</button>
+      <button data-t="evolucao">Evolução</button>
+      <button data-t="admin">Admin</button>
+      <button id="logout" style="margin-left:auto">Sair</button>
+    </nav>
+  </header>
+  <main>
+    <section id="t-tarefas"></section>
+    <section id="t-analise" class="hidden"></section>
+    <section id="t-evolucao" class="hidden"></section>
+    <section id="t-admin" class="hidden"></section>
+  </main>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ===== Núcleo compartilhado: leitura da planilha, normalização e criptografia =====
+const CORE = (() => {
+  const DEFAULT_CARTEIRAS = ['BOM JESUS', 'GA_FLORIAN', 'HIB_PICOS', 'S R NONATO', 'PPM_FLORIA'];
+  const COLS = {
+    n: 'Número do caso', at: 'Atribuído', c: 'Carteira', r: 'Regional', st: 'Status',
+    pa: 'Papel atribuído', aso: 'Assunto', dt: 'Data', pr: 'Prioridade', de: 'Descrição',
+    d: 'Data de criação', ac: 'Assunto do caso', dc: 'Caso: Data de criação',
+    df: 'Caso: Data de fechamento', pc: 'Proprietário do caso'
+  };
+
+  function toISO(v) {
+    if (v === null || v === undefined || v === '') return '';
+    if (v instanceof Date && !isNaN(v)) {
+      const y = v.getFullYear(), m = v.getMonth() + 1, d = v.getDate();
+      return `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+    }
+    if (typeof v === 'number') { // serial do Excel
+      const dt = new Date(Math.round((v - 25569) * 86400000));
+      return dt.toISOString().slice(0, 10);
+    }
+    const s = String(v).trim();
+    let m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})/);
+    if (m) { let y = +m[3]; if (y < 100) y += 2000; return `${y}-${m[2].padStart(2, '0')}-${m[1].padStart(2, '0')}`; }
+    m = s.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if (m) return `${m[1]}-${m[2]}-${m[3]}`;
+    return '';
+  }
+  const clean = s => String(s ?? '').replace(/_x000D_/g, '').replace(/\r/g, '').replace(/[ \t]+\n/g, '\n').replace(/\n\s*\n+/g, '\n').trim();
+  const days = (fromISO, toISO_) => {
+    if (!fromISO || !toISO_) return null;
+    return Math.round((Date.parse(toISO_ + 'T12:00:00Z') - Date.parse(fromISO + 'T12:00:00Z')) / 86400000);
+  };
+  const faixa = d => d == null ? '?' : d <= 5 ? '1-5' : d <= 20 ? '6-20' : '>20';
+  const normAssuntoCaso = s => clean(s).replace(/^((RE|ENC|FW|FWD|RES|ENCAMINHAR)\s*:\s*)+/i, '').trim() || '(sem assunto)';
+
+  // rows: array de objetos (cabeçalho -> valor). snapDate: 'YYYY-MM-DD'
+  function processRows(rows, carteiras, snapDate) {
+    const set = new Set((carteiras && carteiras.length ? carteiras : DEFAULT_CARTEIRAS).map(x => x.trim().toUpperCase()));
+    const out = [];
+    for (const r of rows) {
+      const c = String(r[COLS.c] ?? '').trim();
+      if (!set.has(c.toUpperCase())) continue;
+      const n = String(r[COLS.n] ?? '').trim();
+      if (!n) continue;
+      const o = {};
+      for (const [k, col] of Object.entries(COLS)) o[k] = r[col];
+      o.n = n.padStart(8, '0'); o.c = c;
+      for (const k of ['d', 'dc', 'df', 'dt']) o[k] = toISO(o[k]);
+      for (const k of ['at', 'r', 'st', 'pa', 'aso', 'pr', 'pc']) o[k] = clean(o[k]);
+      o.de = clean(o.de); o.ac = clean(o.ac);
+      o.acn = normAssuntoCaso(o.ac);
+      o.f = o.df ? 1 : 0;                          // pendente só de fechamento
+      o.as = o.f ? 'FECHAMENTO' : (o.aso || 'Outros');
+      o.dias = days(o.d || o.dc, snapDate);
+      o.fx = faixa(o.dias);
+      o.dono = /^carteira\s*:/i.test(o.at) ? '' : o.at;
+      out.push(o);
+    }
+    return out;
+  }
+
+  function sheetToRows(XLSX, arrayBuffer) {
+    const wb = XLSX.read(arrayBuffer, { type: 'array', cellDates: true });
+    const name = wb.SheetNames.find(n => /base/i.test(n)) || wb.SheetNames[0];
+    const rows = XLSX.utils.sheet_to_json(wb.Sheets[name], { defval: '', raw: true });
+    let carteiras = null;
+    const p1 = wb.SheetNames.find(n => n !== name && (() => {
+      const r = XLSX.utils.sheet_to_json(wb.Sheets[n], { defval: '' });
+      return r.length && Object.keys(r[0]).length === 1 && 'Carteira' in r[0];
+    })());
+    if (p1) carteiras = XLSX.utils.sheet_to_json(wb.Sheets[p1], { defval: '' }).map(r => String(r.Carteira).trim()).filter(Boolean);
+    const missing = Object.values(COLS).filter(c => rows.length && !(c in rows[0]));
+    return { rows, carteiras, missing, sheet: name };
+  }
+
+  function guessDateFromName(fname, year) {
+    const m = String(fname).match(/(\d{1,2})[-_.](\d{1,2})(?:[-_.](\d{2,4}))?/);
+    if (!m) return '';
+    let y = m[3] ? +m[3] : year; if (y < 100) y += 2000;
+    return `${y}-${m[2].padStart(2, '0')}-${m[1].padStart(2, '0')}`;
+  }
+
+  function historyEntry(rows, date, file) {
+    return { date, file, total: rows.length, items: rows.map(o => [o.n, o.c, o.dias, o.f, o.as, o.d]) }; // [nº caso, carteira, dias, fechamento, assunto, data criação tarefa]
+  }
+
+  // ---- Criptografia (AES-GCM 256 + PBKDF2-SHA256) ----
+  const ITER = 250000;
+  const b64 = buf => { let s = ''; const b = new Uint8Array(buf); for (let i = 0; i < b.length; i += 0x8000) s += String.fromCharCode.apply(null, b.subarray(i, i + 0x8000)); return btoa(s); };
+  const unb64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+  async function key(pass, salt, crypto_) {
+    const c = crypto_ || crypto;
+    const base = await c.subtle.importKey('raw', new TextEncoder().encode(pass), 'PBKDF2', false, ['deriveKey']);
+    return c.subtle.deriveKey({ name: 'PBKDF2', salt, iterations: ITER, hash: 'SHA-256' }, base, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']);
+  }
+  async function encrypt(obj, pass, crypto_) {
+    const c = crypto_ || crypto;
+    const salt = c.getRandomValues(new Uint8Array(16)), iv = c.getRandomValues(new Uint8Array(12));
+    const k = await key(pass, salt, c);
+    const data = new TextEncoder().encode(JSON.stringify(obj));
+    const ct = await c.subtle.encrypt({ name: 'AES-GCM', iv }, k, data);
+    return JSON.stringify({ v: 1, it: ITER, salt: b64(salt), iv: b64(iv), ct: b64(ct) });
+  }
+  async function decrypt(txt, pass, crypto_) {
+    const c = crypto_ || crypto;
+    const e = JSON.parse(txt);
+    const k = await key(pass, unb64(e.salt), c);
+    const pt = await c.subtle.decrypt({ name: 'AES-GCM', iv: unb64(e.iv) }, k, unb64(e.ct));
+    return JSON.parse(new TextDecoder().decode(pt));
+  }
+  // utf-8 -> base64 (para a API do GitHub)
+  const utf8b64 = str => b64(new TextEncoder().encode(str));
+
+  return { DEFAULT_CARTEIRAS, COLS, processRows, sheetToRows, guessDateFromName, historyEntry, encrypt, decrypt, utf8b64, faixa, days };
+})();
+if (typeof module !== 'undefined') module.exports = CORE;
+
+</script>
+<script>
+// ======================= estado =======================
+const DB_PATH = 'data/db.enc';
+const S = { pass: null, db: null, rows: [], f: { cart: 'ALL', fx: new Set(), q: '', hideDone: false, mes: '', st: '' }, heatBy: 'c' };
+const FX = [['1-5', '1 a 5 dias', 'var(--g)'], ['6-20', '6 a 20 dias', 'var(--y)'], ['>20', 'Maior 20 dias', 'var(--r)']];
+const MESES = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const brDate = iso => iso ? iso.slice(8, 10) + '/' + iso.slice(5, 7) + '/' + iso.slice(0, 4) : '—';
+const mesLbl = ym => MESES[+ym.slice(5, 7) - 1] + '/' + ym.slice(2, 4);
+const toast = m => { const t = $('#toast'); t.textContent = m; t.classList.add('on'); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('on'), 1800); };
+const done = (() => { let o = {}; try { o = JSON.parse(localStorage.getItem('cobrado') || '{}'); } catch (e) {} return { has: n => !!o[n], set: (n, v) => { if (v) o[n] = Date.now(); else delete o[n]; try { localStorage.setItem('cobrado', JSON.stringify(o)); } catch (e) {} } }; })();
+function diasColor(d) { return d == null ? '#eef2f8' : d <= 5 ? '#c9f2df' : d <= 20 ? '#f6efb0' : d <= 60 ? '#fbc8b4' : '#f59c7c'; }
+function slaBar(list) {
+  const t = list.length || 1; const c = { '1-5': 0, '6-20': 0, '>20': 0 };
+  list.forEach(o => c[o.fx] = (c[o.fx] || 0) + 1);
+  return `<div class="sla"><i class="c1" style="width:${c['1-5'] / t * 100}%"></i><i class="c2" style="width:${c['6-20'] / t * 100}%"></i><i class="c3" style="width:${c['>20'] / t * 100}%"></i></div>`;
+}
+function groupBy(list, fn) { const m = new Map(); for (const o of list) { const k = fn(o); if (!m.has(k)) m.set(k, []); m.get(k).push(o); } return m; }
+function owners(c) {
+  const cfg = (S.db.config.donos || {})[c]; if (cfg) return cfg;
+  const m = groupBy(S.rows.filter(o => o.c === c && o.dono), o => o.dono);
+  return [...m.entries()].sort((a, b) => b[1].length - a[1].length).map(e => e[0]).join(', ');
+}
+
+// ======================= login =======================
+async function fetchDB() {
+  const r = await fetch(DB_PATH + '?v=' + Date.now(), { cache: 'no-store' });
+  if (!r.ok) throw new Error('Base não encontrada (' + r.status + ')');
+  return r.text();
+}
+async function login(pass) {
+  const txt = await fetchDB();
+  const db = await CORE.decrypt(txt, pass);
+  S.pass = pass; loadDB(db);
+  try { sessionStorage.setItem('k', pass); } catch (e) {}
+  $('#login').classList.add('hidden'); $('#app').classList.remove('hidden');
+  renderAll();
+}
+function loadDB(db) {
+  db.config = db.config || {}; db.history = db.history || [];
+  S.db = db; S.rows = (db.latest && db.latest.rows) || [];
+}
+$('#loginForm').addEventListener('submit', async e => {
+  e.preventDefault(); const b = $('#loginBtn'); b.disabled = true; b.textContent = 'Abrindo…'; $('#loginErr').textContent = '';
+  try { await login($('#pw').value); }
+  catch (err) { $('#loginErr').textContent = /decrypt|operation/i.test(err.name + err.message) ? 'Palavra-chave incorreta.' : err.message; }
+  b.disabled = false; b.textContent = 'Entrar';
+});
+$('#logout').onclick = () => { try { sessionStorage.removeItem('k'); } catch (e) {} location.reload(); };
+(async () => { let k = null; try { k = sessionStorage.getItem('k'); } catch (e) {} if (k) { try { await login(k); } catch (e) {} } })();
+
+// ======================= abas =======================
+$('#tabs').addEventListener('click', e => {
+  const t = e.target.dataset.t; if (!t) return;
+  document.querySelectorAll('#tabs button[data-t]').forEach(b => b.classList.toggle('on', b.dataset.t === t));
+  document.querySelectorAll('main>section').forEach(s => s.classList.toggle('hidden', s.id !== 't-' + t));
+  window.scrollTo(0, 0);
+});
+function goTab(t) { document.querySelector(`#tabs button[data-t="${t}"]`).click(); }
+
+function renderAll() {
+  requestAnimationFrame(() => document.documentElement.style.setProperty('--hh', document.querySelector('header').offsetHeight + 'px'));
+  const L = S.db.latest || {};
+  $('#hdrSub').textContent = `Carteiras: ${(S.db.config.carteiras || CORE.DEFAULT_CARTEIRAS).join(' · ')}`;
+  $('#hdrMeta').innerHTML = `Base de <b>${brDate(L.date)}</b><br>${S.rows.length} tarefas · ${S.db.history.length} atualização(ões)`;
+  renderTarefas(); renderAnalise(); renderEvolucao(); renderAdmin();
+}
+
+// ======================= TAREFAS =======================
+function filtered(ignoreCart) {
+  const f = S.f, q = f.q.trim().toLowerCase();
+  return S.rows.filter(o =>
+    (ignoreCart || f.cart === 'ALL' || o.c === f.cart) &&
+    (!f.fx.size || f.fx.has(o.f ? 'FE' : o.fx)) &&
+    (!f.mes || (o.d || o.dc || '').slice(0, 7) === f.mes) &&
+    (!f.st || o.st === f.st) &&
+    (!f.hideDone || !done.has(o.n)) &&
+    (!q || [o.n, o.ac, o.de, o.at, o.pc, o.c, o.as, o.aso].join(' ').toLowerCase().includes(q)));
+}
+function renderTarefas() {
+  const el = $('#t-tarefas');
+  const carts = (S.db.config.carteiras || CORE.DEFAULT_CARTEIRAS);
+  const sts = [...new Set(S.rows.map(o => o.st))].filter(Boolean);
+  el.innerHTML = `
+    <div class="carts" id="carts"></div>
+    <div class="filters">
+      <input type="search" id="q" placeholder="Buscar nota, assunto, descrição, responsável…" value="${esc(S.f.q)}">
+      ${FX.map(([k, l, c]) => `<button class="chip ${S.f.fx.has(k) ? 'on' : ''}" data-fx="${k}"><span class="dot" style="background:${c}"></span>${l}</button>`).join('')}
+      <button class="chip ${S.f.fx.has('FE') ? 'on' : ''}" data-fx="FE"><span class="dot" style="background:var(--fe)"></span>Só fechamento</button>
+      <select id="stSel" class="btn"><option value="">Todos status</option>${sts.map(s => `<option ${S.f.st === s ? 'selected' : ''}>${esc(s)}</option>`).join('')}</select>
+      ${S.f.mes ? `<button class="chip on" id="mesChip">Mês ${mesLbl(S.f.mes)} ✕</button>` : ''}
+      <label class="chip"><input type="checkbox" id="hideDone" ${S.f.hideDone ? 'checked' : ''}> Ocultar cobradas</label>
+      <button class="btn" id="expAll">Expandir tudo</button>
+      <button class="btn" id="colAll">Recolher</button>
+      <span class="count" id="cnt"></span>
+    </div>
+    <div id="tree"></div>`;
+  // carteiras
+  const all = filtered(true);
+  const card = (k, nm, ow, list) => {
+    const fe = list.filter(o => o.f).length, ol = list.length ? Math.max(...list.map(o => o.dias || 0)) : 0;
+    return `<button class="cart ${S.f.cart === k ? 'on' : ''}" data-c="${esc(k)}">
+      <div class="nm"><span>${esc(nm)}</span><span>${list.length}</span></div>
+      <div class="ow" title="${esc(ow)}">${esc(ow) || '&nbsp;'}</div>${slaBar(list)}
+      <div class="foot"><span>${fe ? `<b style="color:var(--fe)">${fe}</b> p/ fechar` : '&nbsp;'}</span><span>mais antiga: ${ol}d</span></div></button>`;
+  };
+  $('#carts').innerHTML = card('ALL', 'Todas as carteiras', 'Visão geral', all) +
+    carts.map(c => card(c, c, owners(c), all.filter(o => o.c === c))).join('');
+  $('#carts').onclick = e => { const b = e.target.closest('.cart'); if (!b) return; S.f.cart = b.dataset.c; renderTarefas(); };
+  // filtros
+  let qt; $('#q').oninput = e => { clearTimeout(qt); qt = setTimeout(() => { S.f.q = e.target.value; drawTree(); }, 180); };
+  el.querySelectorAll('[data-fx]').forEach(b => b.onclick = () => { const k = b.dataset.fx; S.f.fx.has(k) ? S.f.fx.delete(k) : S.f.fx.add(k); b.classList.toggle('on'); drawTree(); });
+  $('#stSel').onchange = e => { S.f.st = e.target.value; drawTree(); };
+  $('#hideDone').onchange = e => { S.f.hideDone = e.target.checked; drawTree(); };
+  if ($('#mesChip')) $('#mesChip').onclick = () => { S.f.mes = ''; renderTarefas(); };
+  $('#expAll').onclick = () => document.querySelectorAll('#tree details').forEach(d => d.open = true);
+  $('#colAll').onclick = () => document.querySelectorAll('#tree details').forEach(d => d.open = false);
+  drawTree();
+}
+function drawTree() {
+  const list = filtered(false);
+  $('#cnt').textContent = `${list.length} tarefa(s)`;
+  if (!list.length) { $('#tree').innerHTML = '<div class="empty">Nenhuma tarefa com esses filtros.</div>'; return; }
+  const g1 = [...groupBy(list, o => o.as).entries()].sort((a, b) => (b[0] === 'FECHAMENTO') - (a[0] === 'FECHAMENTO') || b[1].length - a[1].length);
+  const autoOpenL2 = list.length <= 25; const L2 = [];
+  $('#tree').innerHTML = g1.map(([as, items]) => {
+    const g2 = [...groupBy(items, o => o.acn).entries()].sort((a, b) => b[1].length - a[1].length || Math.max(...b[1].map(o => o.dias || 0)) - Math.max(...a[1].map(o => o.dias || 0)));
+    return `<details class="l1 ${as === 'FECHAMENTO' ? 'fe' : ''}" open>
+      <summary><span class="car">▶</span>${esc(as)}${as === 'FECHAMENTO' ? ' <span class="mini" style="font-weight:400">— já tem data de fechamento, só falta fechar no Salesforce</span>' : ''}<span class="n">${items.length}</span>${slaBar(items)}</summary>
+      <div class="l1body">${g2.map(([ac, its]) => {
+        const mx = Math.max(...its.map(o => o.dias || 0)); const cs = [...new Set(its.map(o => o.c))];
+        L2.push(its);
+        return `<details class="l2" data-i="${L2.length - 1}" ${autoOpenL2 ? 'open' : ''}><summary><span class="car">▶</span><span class="t" title="${esc(ac)}">${esc(ac)}</span>
+          <span class="mini">${cs.map(esc).join(', ')}</span><span class="dias" style="background:${diasColor(mx)}">${mx}d</span><span class="n">${its.length}</span></summary>
+          <div class="tasks" data-lazy="1"></div></details>`;
+      }).join('')}</div></details>`;
+  }).join('');
+  // conteúdo lazy (renderiza as tarefas só ao abrir o grupo)
+  document.querySelectorAll('#tree details.l2').forEach(d => {
+    const fill = () => { const box = d.querySelector('.tasks'); if (box.dataset.lazy) { box.innerHTML = L2[+d.dataset.i].slice().sort((a, b) => (b.dias || 0) - (a.dias || 0)).map(taskHTML).join(''); delete box.dataset.lazy; } };
+    if (d.open) fill(); d.addEventListener('toggle', () => d.open && fill());
+  });
+}
+function taskHTML(o) {
+  const long = o.de.length > 220;
+  return `<div class="task ${done.has(o.n) ? 'done' : ''}" data-n="${o.n}">
+    <div class="chk"><input type="checkbox" title="Marcar como cobrada (só neste navegador)" ${done.has(o.n) ? 'checked' : ''}></div>
+    <div>
+      <div class="trow">
+        <button class="nota" title="Copiar número">${esc(o.n)}</button>
+        <span class="tag cart-t">${esc(o.c)}</span>
+        <span class="dias" style="background:${diasColor(o.dias)}">${o.dias ?? '?'} dias</span>
+        <span class="tag">Criada ${brDate(o.d)}</span>
+        ${o.f ? `<span class="tag fe">Fechamento ${brDate(o.df)}</span>` : ''}
+        ${o.st && o.st !== 'Pendente' ? `<span class="tag st">${esc(o.st)}</span>` : ''}
+        ${o.pr && o.pr !== 'Normal' ? `<span class="tag hi">${esc(o.pr)}</span>` : ''}
+        ${o.f && o.aso ? `<span class="tag">${esc(o.aso)}</span>` : ''}
+      </div>
+      <div class="tsub">Atribuído: <b>${esc(o.at)}</b> · Proprietário do caso: ${esc(o.pc)} · Caso aberto ${brDate(o.dc)}</div>
+      ${o.ac !== o.acn ? `<div class="tsub">Assunto original: ${esc(o.ac)}</div>` : ''}
+      <div class="desc ${long ? '' : 'open'}">${esc(o.de) || '<i>(sem descrição)</i>'}</div>
+      ${long ? '<button class="more">ver mais</button>' : ''}
+    </div></div>`;
+}
+document.addEventListener('click', e => {
+  if (e.target.matches('.nota')) { navigator.clipboard?.writeText(e.target.textContent).then(() => toast('Nº ' + e.target.textContent + ' copiado')); }
+  if (e.target.matches('.more')) { const d = e.target.previousElementSibling; d.classList.toggle('open'); e.target.textContent = d.classList.contains('open') ? 'ver menos' : 'ver mais'; }
+});
+document.addEventListener('change', e => {
+  if (e.target.matches('.task .chk input')) { const t = e.target.closest('.task'); done.set(t.dataset.n, e.target.checked); t.classList.toggle('done', e.target.checked); }
+});
+
+// ======================= ANÁLISE =======================
+function stackedBars(groups, onClickAttr) {
+  const max = Math.max(1, ...groups.map(g => g[1].length));
+  return `<div class="legend">${FX.map(([k, l, c]) => `<span><i style="background:${c}"></i>${l}</span>`).join('')}<span><i style="background:var(--fe)"></i>Fechamento</span></div>
+  <div class="bars">${groups.map(([k, list]) => {
+    const c = { a: 0, b: 0, c: 0, f: 0 }; list.forEach(o => o.f ? c.f++ : o.fx === '1-5' ? c.a++ : o.fx === '6-20' ? c.b++ : c.c++);
+    const w = n => n / max * 100;
+    const seg = (n, cl) => n ? `<i class="${cl}" style="width:${w(n)}%">${n / max > .04 ? n : ''}</i>` : '';
+    return `<div class="row" ${onClickAttr ? `${onClickAttr}="${esc(k)}" style="cursor:pointer"` : ''}><div class="lbl" title="${esc(k)}">${esc(k)}</div><div class="track">${seg(c.a, 'c1')}${seg(c.b, 'c2')}${seg(c.c, 'c3')}${seg(c.f, 'cF')}</div><div class="tot">${list.length}</div></div>`;
+  }).join('')}</div>`;
+}
+function renderAnalise() {
+  const R = S.rows, n = R.length || 1;
+  const cnt = k => R.filter(o => o.fx === k).length;
+  const fe = R.filter(o => o.f).length, prog = R.filter(o => o.st && o.st !== 'Pendente').length;
+  const carts = S.db.config.carteiras || CORE.DEFAULT_CARTEIRAS;
+  const byPr = [...groupBy(R, o => o.pr || '(vazio)').entries()].sort((a, b) => b[1].length - a[1].length);
+  const byResp = [...groupBy(R, o => o.at).entries()].sort((a, b) => b[1].length - a[1].length);
+  const byAs = [...groupBy(R, o => o.aso || 'Outros').entries()].sort((a, b) => b[1].length - a[1].length);
+  $('#t-analise').innerHTML = `
+    <div class="kpis">
+      <div class="kpi"><b>Total de tarefas abertas</b><div class="v">${R.length}</div><small>100%</small></div>
+      <div class="kpi" style="border-color:var(--g)"><b>De 1 a 5 dias</b><div class="v">${cnt('1-5')}</div><small>${(cnt('1-5') / n * 100).toFixed(1)}%</small></div>
+      <div class="kpi" style="border-color:var(--y)"><b>De 6 a 20 dias</b><div class="v">${cnt('6-20')}</div><small>${(cnt('6-20') / n * 100).toFixed(1)}%</small></div>
+      <div class="kpi" style="border-color:var(--r)"><b>Mais de 20 dias</b><div class="v">${cnt('>20')}</div><small>${(cnt('>20') / n * 100).toFixed(1)}%</small></div>
+      <div class="kpi" style="border-color:var(--fe)"><b>Só falta fechar</b><div class="v">${fe}</div><small>com data de fechamento</small></div>
+      <div class="kpi" style="border-color:var(--blue)"><b>Em progresso</b><div class="v">${prog}</div><small>status ≠ Pendente</small></div>
+    </div>
+    <div class="panel"><h3>Mapa de calor por mês de criação da tarefa
+      <span class="seg" id="heatBy"><button data-b="c">Carteira</button><button data-b="as">Assunto</button><button data-b="at">Responsável</button></span>
+      <small>clique numa célula para abrir as tarefas</small></h3><div class="heat" id="heat"></div></div>
+    <div class="grid2">
+      <div class="panel"><h3>Por prioridade</h3>${stackedBars(byPr)}
+        <p class="note" style="margin:10px 0 0">${byPr.length === 1 ? 'Todas as tarefas estão com a mesma prioridade.' : byPr.map(([k, l]) => `${esc(k)}: ${l.length} (${(l.length / n * 100).toFixed(1)}%)`).join(' · ')}</p></div>
+      <div class="panel"><h3>SLA por carteira <small>clique para filtrar</small></h3>${stackedBars(carts.map(c => [c, R.filter(o => o.c === c)]), 'data-gocart')}</div>
+    </div>
+    <div class="grid2">
+      <div class="panel"><h3>Por responsável (Atribuído)</h3>${stackedBars(byResp)}</div>
+      <div class="panel"><h3>Por assunto (G)</h3>${stackedBars(byAs)}</div>
+    </div>`;
+  document.querySelectorAll('#heatBy button').forEach(b => { b.classList.toggle('on', b.dataset.b === S.heatBy); b.onclick = () => { S.heatBy = b.dataset.b; renderAnalise(); }; });
+  drawHeat();
+  document.querySelectorAll('[data-gocart]').forEach(r => r.onclick = () => { S.f.cart = r.dataset.gocart; S.f.mes = ''; renderTarefas(); goTab('tarefas'); });
+}
+function drawHeat() {
+  const R = S.rows, by = S.heatBy;
+  const key = o => by === 'c' ? o.c : by === 'as' ? (o.f ? 'FECHAMENTO' : o.aso || 'Outros') : o.at;
+  const mes = o => (o.d || o.dc || '').slice(0, 7);
+  const months = [...new Set(R.map(mes).filter(Boolean))].sort();
+  const rowsK = [...groupBy(R, key).entries()].sort((a, b) => b[1].length - a[1].length);
+  const max = Math.max(1, ...rowsK.flatMap(([, l]) => months.map(m => l.filter(o => mes(o) === m).length)));
+  const col = v => { const t = v / max; const a = 0.12 + t * 0.88; return `background:rgba(239,98,54,${a.toFixed(2)});color:${t > .55 ? '#fff' : '#5a1d08'}`; };
+  $('#heat').innerHTML = `<table><thead><tr><th></th>${months.map(m => `<th>${mesLbl(m)}</th>`).join('')}<th>Total</th></tr></thead><tbody>
+    ${rowsK.map(([k, l]) => `<tr><th class="rl" title="${esc(k)}">${esc(k)}</th>${months.map(m => { const v = l.filter(o => mes(o) === m).length; return v ? `<td style="${col(v)}" data-k="${esc(k)}" data-m="${m}">${v}</td>` : '<td class="z">·</td>'; }).join('')}<td class="tt">${l.length}</td></tr>`).join('')}
+    <tr><th class="rl">Total</th>${months.map(m => `<td class="tt">${R.filter(o => mes(o) === m).length}</td>`).join('')}<td class="tt">${R.length}</td></tr></tbody></table>`;
+  $('#heat').onclick = e => {
+    const td = e.target.closest('td[data-m]'); if (!td) return;
+    S.f = { cart: 'ALL', fx: new Set(), q: '', hideDone: S.f.hideDone, mes: td.dataset.m, st: '' };
+    if (by === 'c') S.f.cart = td.dataset.k; else S.f.q = td.dataset.k === 'FECHAMENTO' ? '' : td.dataset.k;
+    if (by === 'as' && td.dataset.k === 'FECHAMENTO') S.f.fx.add('FE');
+    renderTarefas(); goTab('tarefas');
+  };
+}
+
+// ======================= EVOLUÇÃO =======================
+function lineChart(series, labels, h = 240) {
+  const W = 760, H = h, P = { l: 40, r: 110, t: 14, b: 30 };
+  const max = Math.max(1, ...series.flatMap(s => s.v)); const n = labels.length;
+  const x = i => P.l + (n === 1 ? (W - P.l - P.r) / 2 : i * (W - P.l - P.r) / (n - 1));
+  const y = v => P.t + (H - P.t - P.b) * (1 - v / max);
+  const ticks = [0, .25, .5, .75, 1].map(t => Math.round(max * t));
+  return `<svg viewBox="0 0 ${W} ${H}" width="100%" style="max-height:${H + 20}px">
+    ${ticks.map(t => `<line x1="${P.l}" x2="${W - P.r}" y1="${y(t)}" y2="${y(t)}" stroke="#eef0f3"/><text x="${P.l - 6}" y="${y(t) + 4}" font-size="10" text-anchor="end" fill="#98a2b3">${t}</text>`).join('')}
+    ${labels.map((l, i) => `<text x="${x(i)}" y="${H - 10}" font-size="10.5" text-anchor="middle" fill="#667085">${l}</text>`).join('')}
+    ${series.map(s => `<polyline fill="none" stroke="${s.c}" stroke-width="${s.w || 2}" points="${s.v.map((v, i) => x(i) + ',' + y(v)).join(' ')}"/>
+      ${s.v.map((v, i) => `<circle cx="${x(i)}" cy="${y(v)}" r="3.2" fill="${s.c}"><title>${esc(s.n)} · ${labels[i]}: ${v}</title></circle>`).join('')}
+`).join('')}
+    ${(() => { const L = series.map(s => ({ s, y: y(s.v[n - 1]) + 4 })).sort((a, b) => a.y - b.y); for (let i = 1; i < L.length; i++) if (L[i].y - L[i - 1].y < 13) L[i].y = L[i - 1].y + 13;
+      return L.map(({ s, y: yy }) => `<text x="${x(n - 1) + 8}" y="${yy}" font-size="11" fill="${s.c}" font-weight="700">${esc(s.n)} ${s.v[n - 1]}</text>`).join(''); })()}
+  </svg>`;
+}
+const PALETTE = ['#0b2e59', '#2e6bd6', '#14a37f', '#e08a00', '#b4318b', '#6b4de6', '#d14343', '#5b7083'];
+function renderEvolucao() {
+  const H = [...S.db.history].sort((a, b) => a.date.localeCompare(b.date));
+  const el = $('#t-evolucao');
+  if (!H.length) { el.innerHTML = '<div class="panel empty">Sem histórico ainda.</div>'; return; }
+  const carts = S.db.config.carteiras || CORE.DEFAULT_CARTEIRAS;
+  const labels = H.map(h => brDate(h.date).slice(0, 5));
+  const itemsBy = (h, f) => h.items.filter(f).length;
+  const totalS = [{ n: 'Total', c: '#0b2e59', w: 3, v: H.map(h => h.items.length) }];
+  const cartS = carts.map((c, i) => ({ n: c, c: PALETTE[(i + 1) % PALETTE.length], v: H.map(h => itemsBy(h, it => it[1] === c)) }));
+  const fxS = [
+    { n: '>20 dias', c: '#ef6236', v: H.map(h => itemsBy(h, it => !it[3] && it[2] > 20)) },
+    { n: '6-20 dias', c: '#c9b800', v: H.map(h => itemsBy(h, it => !it[3] && it[2] > 5 && it[2] <= 20)) },
+    { n: '1-5 dias', c: '#2fb27b', v: H.map(h => itemsBy(h, it => !it[3] && it[2] <= 5)) },
+    { n: 'Fechamento', c: '#6b4de6', v: H.map(h => itemsBy(h, it => it[3])) }];
+  let cmp = '';
+  if (H.length >= 2) {
+    const a = H[H.length - 2], b = H[H.length - 1];
+    const K = i => i[0] + '|' + (i[5] || ''); // um caso pode ter várias tarefas: chave = nº + data de criação da tarefa
+    const A = new Map(a.items.map(i => [K(i), i])), B = new Map(b.items.map(i => [K(i), i]));
+    const saiu = a.items.filter(i => !B.has(K(i))), novo = b.items.filter(i => !A.has(K(i))), fica = b.items.filter(i => A.has(K(i)));
+    const virouFe = fica.filter(i => i[3] && !A.get(K(i))[3]);
+    const row = c => { const fa = a.items.filter(i => i[1] === c).length, fb = b.items.filter(i => i[1] === c).length, d = fb - fa;
+      return `<tr><td><b>${esc(c)}</b><div class="note">${esc(owners(c))}</div></td><td class="num">${fa}</td><td class="num">${fb}</td><td class="num ${d > 0 ? 'up' : d < 0 ? 'down' : ''}">${d > 0 ? '+' : ''}${d}</td>
+        <td class="num down">${saiu.filter(i => i[1] === c).length}</td><td class="num up">${novo.filter(i => i[1] === c).length}</td><td class="num">${b.items.filter(i => i[1] === c && i[3]).length}</td></tr>`; };
+    const ids = (l, cls) => l.length ? `<div class="idlist">${l.map(i => `<span class="tag ${cls}" title="${esc(i[1])} · ${esc(i[4])}${i[5] ? ' · tarefa de ' + brDate(i[5]) : ''}">${esc(i[0])}</span>`).join('')}</div>` : '<span class="note">nenhuma</span>';
+    cmp = `<div class="kpis">
+      <div class="kpi"><b>Antes (${brDate(a.date)})</b><div class="v">${a.items.length}</div></div>
+      <div class="kpi"><b>Agora (${brDate(b.date)})</b><div class="v">${b.items.length}</div><small class="${b.items.length > a.items.length ? 'up' : 'down'}">${b.items.length - a.items.length > 0 ? '+' : ''}${b.items.length - a.items.length}</small></div>
+      <div class="kpi" style="border-color:var(--g)"><b>Resolvidas / saíram</b><div class="v">${saiu.length}</div><small>${(saiu.length / (a.items.length || 1) * 100).toFixed(0)}% do backlog anterior</small></div>
+      <div class="kpi" style="border-color:var(--r)"><b>Novas</b><div class="v">${novo.length}</div></div>
+      <div class="kpi" style="border-color:var(--fe)"><b>Fechamento resolvido</b><div class="v">${saiu.filter(i => i[3]).length}</div><small>de ${a.items.filter(i => i[3]).length} pendentes antes</small></div>
+      <div class="kpi" style="border-color:var(--fe)"><b>Viraram fechamento</b><div class="v">${virouFe.length}</div></div>
+    </div>
+    <div class="panel"><h3>Comparativo por carteira <small>${brDate(a.date)} → ${brDate(b.date)}</small></h3>
+      <table class="tb"><thead><tr><th>Carteira</th><th class="num">Antes</th><th class="num">Agora</th><th class="num">Δ</th><th class="num">Saíram</th><th class="num">Novas</th><th class="num">P/ fechar</th></tr></thead><tbody>${carts.map(row).join('')}</tbody></table></div>
+    <div class="grid2"><div class="panel"><h3>Saíram do backlog <small>${saiu.length}</small></h3>${ids(saiu, '')}</div>
+      <div class="panel"><h3>Entraram <small>${novo.length}</small></h3>${ids(novo, 'hi')}</div></div>`;
+  }
+  // idade média
+  const age = H.map(h => { const v = h.items.filter(i => i[2] != null).map(i => i[2]); return v.length ? Math.round(v.reduce((s, x) => s + x, 0) / v.length) : 0; });
+  el.innerHTML = `${H.length < 2 ? `<div class="warn" style="margin-bottom:14px">Só há <b>1 base</b> carregada (${brDate(H[0].date)}). A partir do próximo upload no Admin, esta aba mostra o que saiu, o que entrou e a evolução por carteira.</div>` : ''}
+    ${cmp}
+    <div class="grid2">
+      <div class="panel"><h3>Backlog total por base</h3>${lineChart(totalS, labels)}</div>
+      <div class="panel"><h3>Por carteira</h3>${lineChart(cartS, labels)}</div>
+      <div class="panel"><h3>Por faixa de SLA</h3>${lineChart(fxS, labels)}</div>
+      <div class="panel"><h3>Idade média das tarefas (dias)</h3>${lineChart([{ n: 'Idade média', c: '#e08a00', w: 3, v: age }], labels)}</div>
+    </div>
+    <div class="panel"><h3>Bases carregadas</h3><table class="tb"><thead><tr><th>Data da base</th><th>Arquivo</th><th class="num">Tarefas</th><th class="num">P/ fechar</th><th class="num">&gt;20 dias</th></tr></thead><tbody>
+      ${H.slice().reverse().map(h => `<tr><td>${brDate(h.date)}</td><td>${esc(h.file || '')}</td><td class="num">${h.items.length}</td><td class="num">${h.items.filter(i => i[3]).length}</td><td class="num">${h.items.filter(i => !i[3] && i[2] > 20).length}</td></tr>`).join('')}</tbody></table></div>`;
+}
+
+// ======================= ADMIN =======================
+const GH = {
+  get cfg() {
+    const host = location.hostname.endsWith('github.io') ? location.hostname.split('.')[0] : '';
+    const repo = location.hostname.endsWith('github.io') ? location.pathname.split('/')[1] : '';
+    let st = {}; try { st = JSON.parse(localStorage.getItem('ghcfg') || '{}'); } catch (e) {}
+    return { owner: st.owner || host || 'LCEQTL', repo: st.repo || repo || 'Tarefas-SALESFORCE', token: st.token || sessionStorage.getItem('ght') || '' };
+  },
+  async api(path, opt = {}) {
+    const c = this.cfg; if (!c.token) throw new Error('Informe o token do GitHub.');
+    const r = await fetch(`https://api.github.com/repos/${c.owner}/${c.repo}${path}`, { ...opt, headers: { Authorization: 'Bearer ' + c.token, Accept: 'application/vnd.github+json', ...(opt.headers || {}) } });
+    if (!r.ok) { let m = ''; try { m = (await r.json()).message; } catch (e) {} throw new Error(`GitHub ${r.status}: ${m}`); }
+    return r;
+  },
+  async readDB() {
+    const meta = await (await this.api(`/contents/${DB_PATH}?ref=main&t=${Date.now()}`)).json();
+    const raw = await (await this.api(`/contents/${DB_PATH}?ref=main&t=${Date.now()}`, { headers: { Accept: 'application/vnd.github.raw' } })).text();
+    return { sha: meta.sha, raw };
+  },
+  async writeDB(text, sha, msg) {
+    return (await this.api(`/contents/${DB_PATH}`, { method: 'PUT', body: JSON.stringify({ message: msg, content: CORE.utf8b64(text), sha, branch: 'main' }) })).json();
+  }
+};
+let XLSXlib = null;
+async function loadXLSX() {
+  if (XLSXlib) return XLSXlib;
+  await new Promise((ok, ko) => { const s = document.createElement('script'); s.src = 'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js'; s.onload = ok; s.onerror = () => ko(new Error('Não consegui carregar o leitor de Excel (SheetJS).')); document.head.appendChild(s); });
+  return (XLSXlib = window.XLSX);
+}
+let pending = null;
+function renderAdmin() {
+  const c = GH.cfg, cfg = S.db.config;
+  $('#t-admin').innerHTML = `
+  <div class="grid2">
+    <div class="panel form"><h3>1 · Nova base semanal</h3>
+      <div class="drop" id="drop">Arraste aqui o <b>Relatório Tarefas Salesforce (.xlsx)</b><br><span class="note">ou clique para escolher · mesmas colunas da base atual</span><input type="file" id="file" accept=".xlsx,.xls,.csv" hidden></div>
+      <div id="prev"></div>
+      <label>Data da base (usada para calcular os dias em aberto)</label><input type="date" id="snapDate">
+      <div style="display:flex;gap:8px;margin-top:12px"><button class="btn pri" id="pub" disabled>Publicar (commit criptografado)</button></div>
+      <div class="log hidden" id="log"></div>
+    </div>
+    <div class="panel form"><h3>2 · Acesso ao GitHub</h3>
+      <label>Usuário / organização</label><input type="text" id="ghOwner" value="${esc(c.owner)}">
+      <label>Repositório</label><input type="text" id="ghRepo" value="${esc(c.repo)}">
+      <label>Token (fine-grained, permissão <i>Contents: Read and write</i> só neste repo)</label><input type="password" id="ghTok" value="${esc(c.token)}" placeholder="github_pat_…" autocomplete="off">
+      <label style="font-weight:400;display:flex;gap:6px;align-items:center"><input type="checkbox" id="ghRem" ${(() => { try { return JSON.parse(localStorage.getItem('ghcfg') || '{}').token ? 'checked' : ''; } catch (e) { return ''; } })()}> Lembrar neste navegador (senão vale só até fechar a aba)</label>
+      <div style="margin-top:10px;display:flex;gap:8px"><button class="btn" id="ghSave">Salvar</button><button class="btn" id="ghTest">Testar acesso</button></div>
+      <p class="note">O token nunca vai para o repositório: fica só neste navegador.</p>
+    </div>
+  </div>
+  <div class="grid2">
+    <div class="panel form"><h3>3 · Carteiras e donos</h3>
+      <label>Carteiras filtradas (uma por linha)</label><textarea id="cfgCarts">${esc((cfg.carteiras || CORE.DEFAULT_CARTEIRAS).join('\n'))}</textarea>
+      <label>Nome do dono por carteira (opcional · formato <code>CARTEIRA = Nome</code>; vazio = automático pelos atribuídos)</label>
+      <textarea id="cfgDonos" placeholder="S R NONATO = Fulano">${esc(Object.entries(cfg.donos || {}).map(([k, v]) => k + ' = ' + v).join('\n'))}</textarea>
+      <div style="margin-top:10px"><button class="btn pri" id="cfgSave">Salvar configuração (commit)</button></div>
+      <p class="note">A lista de carteiras vale para as próximas bases enviadas. Se a planilha tiver a aba de filtro (coluna “Carteira”), você pode usar ela no envio.</p>
+    </div>
+    <div class="panel form"><h3>4 · Manutenção</h3>
+      <label>Bases no histórico</label>
+      <div>${[...S.db.history].sort((a, b) => b.date.localeCompare(a.date)).map(h => `<div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--line)"><span>${brDate(h.date)} · ${h.items.length} tarefas <span class="note">${esc(h.file || '')}</span></span><button class="btn" data-del="${h.date}">Remover</button></div>`).join('')}</div>
+      <label style="margin-top:16px">Trocar palavra-chave</label>
+      <input type="password" id="np1" placeholder="Nova palavra-chave"><input type="password" id="np2" placeholder="Repita" style="margin-top:6px">
+      <div style="margin-top:10px"><button class="btn" id="chPass">Trocar e recriptografar</button></div>
+    </div>
+  </div>`;
+  const log = m => { const l = $('#log'); l.classList.remove('hidden'); l.textContent += m + '\n'; l.scrollTop = 1e9; };
+  // GitHub cfg
+  $('#ghSave').onclick = () => {
+    const v = { owner: $('#ghOwner').value.trim(), repo: $('#ghRepo').value.trim(), token: $('#ghTok').value.trim() };
+    try {
+      if ($('#ghRem').checked) { localStorage.setItem('ghcfg', JSON.stringify(v)); sessionStorage.removeItem('ght'); }
+      else { localStorage.setItem('ghcfg', JSON.stringify({ owner: v.owner, repo: v.repo })); sessionStorage.setItem('ght', v.token); }
+    } catch (e) {}
+    toast('Salvo');
+  };
+  $('#ghTest').onclick = async () => { $('#ghSave').click(); try { const r = await (await GH.api('')).json(); toast('OK: ' + r.full_name + (r.permissions?.push ? ' (pode gravar)' : ' (sem permissão de gravação!)')); } catch (e) { toast(e.message); } };
+  // upload
+  const drop = $('#drop'), file = $('#file');
+  drop.onclick = () => file.click();
+  drop.ondragover = e => { e.preventDefault(); drop.classList.add('over'); };
+  drop.ondragleave = () => drop.classList.remove('over');
+  drop.ondrop = e => { e.preventDefault(); drop.classList.remove('over'); if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]); };
+  file.onchange = () => file.files[0] && handleFile(file.files[0]);
+  async function handleFile(f) {
+    $('#prev').innerHTML = '<p class="note">Lendo…</p>';
+    try {
+      const X = await loadXLSX(); const buf = await f.arrayBuffer();
+      const res = CORE.sheetToRows(X, buf);
+      const guess = CORE.guessDateFromName(f.name, new Date().getFullYear()) || new Date().toISOString().slice(0, 10);
+      if (!$('#snapDate').value) $('#snapDate').value = guess;
+      pending = { file: f.name, res };
+      previewPending();
+    } catch (e) { $('#prev').innerHTML = `<div class="warn">${esc(e.message)}</div>`; }
+  }
+  function previewPending() {
+    if (!pending) return;
+    const { res } = pending; const carts = $('#cfgCarts').value.split('\n').map(s => s.trim()).filter(Boolean);
+    const useSheet = res.carteiras && $('#useSheetCarts')?.checked;
+    const list = CORE.processRows(res.rows, useSheet ? res.carteiras : carts, $('#snapDate').value);
+    pending.list = list; pending.carts = useSheet ? res.carteiras : carts;
+    const by = groupBy(list, o => o.c);
+    $('#prev').innerHTML = `
+      ${res.missing.length ? `<div class="warn">Colunas não encontradas: ${res.missing.map(esc).join(', ')}</div>` : ''}
+      ${res.carteiras ? `<label style="font-weight:400;display:flex;gap:6px;align-items:center"><input type="checkbox" id="useSheetCarts" ${useSheet ? 'checked' : ''}> Usar as carteiras da aba de filtro da planilha (${res.carteiras.map(esc).join(', ')})</label>` : ''}
+      <p style="margin:10px 0 4px"><b>${esc(pending.file)}</b> · ${res.rows.length} linhas na planilha → <b>${list.length}</b> das suas carteiras (${list.filter(o => o.f).length} com data de fechamento)</p>
+      <p class="note">${[...by.entries()].map(([k, v]) => `${esc(k)}: ${v.length}`).join(' · ')}</p>`;
+    if ($('#useSheetCarts')) $('#useSheetCarts').onchange = previewPending;
+    $('#pub').disabled = !list.length;
+  }
+  $('#snapDate').onchange = previewPending;
+  $('#pub').onclick = async () => {
+    if (!pending?.list?.length) return; const b = $('#pub'); b.disabled = true; $('#log').textContent = '';
+    try {
+      const date = $('#snapDate').value; if (!date) throw new Error('Informe a data da base.');
+      log('Lendo base atual do repositório…'); const cur = await GH.readDB();
+      const db = await CORE.decrypt(cur.raw, S.pass); db.config = db.config || {}; db.history = db.history || [];
+      db.config.carteiras = pending.carts;
+      db.latest = { date, file: pending.file, uploaded: new Date().toISOString(), rows: pending.list };
+      db.history = db.history.filter(h => h.date !== date); db.history.push(CORE.historyEntry(pending.list, date, pending.file));
+      db.history.sort((a, b) => a.date.localeCompare(b.date));
+      log(`Criptografando ${pending.list.length} tarefas…`); const enc = await CORE.encrypt(db, S.pass);
+      log('Enviando commit…'); const r = await GH.writeDB(enc, cur.sha, `Base ${brDate(date)} · ${pending.list.length} tarefas`);
+      log('✔ Commit ' + r.commit.sha.slice(0, 7) + '. O site atualiza em ~1 min (já está atualizado nesta aba).');
+      loadDB(db); pending = null; renderAll(); goTab('admin'); toast('Base publicada');
+    } catch (e) { log('✖ ' + e.message); b.disabled = false; }
+  };
+  // config
+  $('#cfgSave').onclick = async () => {
+    try {
+      const cur = await GH.readDB(); const db = await CORE.decrypt(cur.raw, S.pass);
+      db.config = db.config || {};
+      db.config.carteiras = $('#cfgCarts').value.split('\n').map(s => s.trim()).filter(Boolean);
+      db.config.donos = Object.fromEntries($('#cfgDonos').value.split('\n').map(l => l.split('=')).filter(p => p.length >= 2 && p[0].trim()).map(p => [p[0].trim(), p.slice(1).join('=').trim()]));
+      await GH.writeDB(await CORE.encrypt(db, S.pass), cur.sha, 'Configuração de carteiras');
+      loadDB(db); renderAll(); goTab('admin'); toast('Configuração salva');
+    } catch (e) { toast(e.message); }
+  };
+  document.querySelectorAll('[data-del]').forEach(b => b.onclick = async () => {
+    if (!confirm('Remover a base de ' + brDate(b.dataset.del) + ' do histórico?')) return;
+    try {
+      const cur = await GH.readDB(); const db = await CORE.decrypt(cur.raw, S.pass);
+      db.history = db.history.filter(h => h.date !== b.dataset.del);
+      if (db.latest?.date === b.dataset.del && db.history.length) toast('Atenção: a base atual continua sendo a de ' + brDate(db.latest.date));
+      await GH.writeDB(await CORE.encrypt(db, S.pass), cur.sha, 'Remove base ' + b.dataset.del);
+      loadDB(db); renderAll(); goTab('admin'); toast('Removida');
+    } catch (e) { toast(e.message); }
+  });
+  $('#chPass').onclick = async () => {
+    const a = $('#np1').value, b2 = $('#np2').value;
+    if (a.length < 6) return toast('Use pelo menos 6 caracteres'); if (a !== b2) return toast('As palavras-chave não conferem');
+    try {
+      const cur = await GH.readDB(); const db = await CORE.decrypt(cur.raw, S.pass);
+      await GH.writeDB(await CORE.encrypt(db, a), cur.sha, 'Troca de palavra-chave');
+      S.pass = a; try { sessionStorage.setItem('k', a); } catch (e) {} toast('Palavra-chave trocada');
+    } catch (e) { toast(e.message); }
+  };
+}
+</script>
+</body>
+</html>
