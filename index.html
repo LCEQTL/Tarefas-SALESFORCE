@@ -56,6 +56,30 @@ main{padding:18px 22px 60px;max-width:1500px;margin:0 auto}
 .sla{display:flex;height:8px;border-radius:4px;overflow:hidden;background:#eef1f5}
 .sla i{display:block;height:100%}
 .c1{background:var(--g)}.c2{background:var(--y)}.c3{background:var(--r)}.cF{background:var(--fe)}
+/* ---- visão geral ---- */
+.ov{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+@media(max-width:1000px){.ov{grid-template-columns:1fr}}
+.ov .panel{margin:0}
+.ovall{cursor:pointer;border:2px solid transparent;transition:.15s}
+.ovall:hover{border-color:#c9d6ea}.ovall.on{border-color:var(--navy);background:#f6f9ff}
+.ovall .big{display:flex;align-items:baseline;gap:10px;margin:2px 0 10px}
+.ovall .big b{font-size:40px;color:var(--navy);line-height:1}
+.ovall .big span{color:var(--mute)}
+.ovall .track{height:28px;font-size:12.5px}
+.minis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.minis div{background:#f6f8fb;border-radius:9px;padding:7px 10px;font-size:11.5px;color:var(--mute);cursor:pointer;border:1px solid transparent}
+.minis div:hover{border-color:#c9d6ea}
+.minis div.on{border-color:var(--navy);background:#eef4ff}
+.minis b{display:block;font-size:18px;color:var(--navy)}
+.crow{display:grid;grid-template-columns:150px 1fr 40px;gap:10px;align-items:center;padding:6px 8px;border-radius:9px;cursor:pointer;border:1px solid transparent}
+.crow:hover{background:#f6f8fb}
+.crow.on{background:#eef4ff;border-color:var(--navy)}
+.crow .nm{font-weight:700;color:var(--navy);font-size:13px;line-height:1.2}
+.crow .nm small{display:block;font-weight:400;color:var(--mute);font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.crow .tot{font-weight:700;color:var(--navy);text-align:right}
+.track{display:flex;height:20px;border-radius:5px;overflow:hidden;background:#f1f3f6}
+.track i{display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-style:normal;font-weight:700;min-width:0;overflow:hidden}
+.track i.c2{color:#3b3a10}
 /* ---- filtros ---- */
 .filters{display:flex;flex-wrap:wrap;gap:8px;align-items:center;background:var(--card);padding:10px 12px;border-radius:var(--rad);box-shadow:var(--sh);margin-bottom:14px;position:sticky;top:var(--hh,100px);z-index:10}
 .filters input[type=search]{flex:1 1 240px;padding:8px 11px;border:1px solid var(--line);border-radius:9px;min-width:180px}
@@ -73,11 +97,19 @@ details.l1{background:var(--card);border-radius:var(--rad);box-shadow:var(--sh);
 details.l1>summary{list-style:none;padding:12px 16px;display:flex;align-items:center;gap:10px;cursor:pointer;font-weight:700;color:var(--navy);font-size:15px;border-bottom:1px solid transparent}
 details.l1[open]>summary{border-bottom-color:var(--line)}
 details.l1.fe>summary{background:linear-gradient(90deg,#efeaff,#fff);color:#4a2fc2}
+details.l1.dup>summary{background:linear-gradient(90deg,#fff3e0,#fff);color:#a35200}
+.tag.dup{background:#fff3e0;color:#a35200;font-weight:700}
+.by{font-size:11.5px;color:#067647;font-weight:600}
+#saveSt{font-size:11.5px;opacity:.85;margin-right:10px}
+#who{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);color:#fff;border-radius:8px;padding:4px 8px;width:130px;font-size:12px}
+#who::placeholder{color:#cfe0ff}
 summary::-webkit-details-marker{display:none}
 summary .car{transition:transform .15s;display:inline-block;width:12px;color:var(--mute)}
 details[open]>summary .car{transform:rotate(90deg)}
 summary .n{background:#eef2f8;color:var(--navy);border-radius:999px;padding:1px 9px;font-size:12px;font-weight:700}
-summary .sla{width:140px;margin-left:auto}
+summary .sumbar{margin-left:auto;display:flex;align-items:center;gap:10px}
+summary .sumbar .track{width:min(340px,32vw);height:22px}
+summary .sumbar .tt{font-weight:800;color:var(--navy);min-width:34px;text-align:right;font-size:15px}
 .l1body{padding:6px 10px 10px}
 details.l2{border-bottom:1px solid #f0f2f5}
 details.l2:last-child{border-bottom:0}
@@ -107,9 +139,6 @@ details.l2>summary .t{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;
 /* ---- gráficos ---- */
 .bars .row{display:grid;grid-template-columns:170px 1fr 48px;gap:10px;align-items:center;margin:6px 0;font-size:12.5px}
 .bars .lbl{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:right;color:#344054}
-.bars .track{display:flex;height:20px;border-radius:5px;overflow:hidden;background:#f1f3f6}
-.bars .track i{display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-style:normal;font-weight:700;min-width:0}
-.bars .track i.c2{color:#3b3a10}
 .bars .tot{font-weight:700;color:var(--navy)}
 .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--mute);margin-bottom:8px}
 .legend span{display:inline-flex;align-items:center;gap:5px}
@@ -171,7 +200,7 @@ table.tb td.num,table.tb th.num{text-align:right}
       <button data-t="analise">Análise</button>
       <button data-t="evolucao">Evolução</button>
       <button data-t="admin">Admin</button>
-      <button id="logout" style="margin-left:auto">Sair</button>
+      <span style="margin-left:auto;display:flex;align-items:center;gap:6px;padding-bottom:4px"><span id="saveSt"></span><input id="who" placeholder="Seu nome" title="Aparece nas tarefas que você marcar como cobradas"><button id="logout" style="background:transparent;border:0;color:#cfe0ff;font-weight:600;padding:6px 10px">Sair</button></span>
     </nav>
   </header>
   <main>
@@ -217,7 +246,9 @@ const CORE = (() => {
     return Math.round((Date.parse(toISO_ + 'T12:00:00Z') - Date.parse(fromISO + 'T12:00:00Z')) / 86400000);
   };
   const faixa = d => d == null ? '?' : d <= 5 ? '1-5' : d <= 20 ? '6-20' : '>20';
-  const normAssuntoCaso = s => clean(s).replace(/^((RE|ENC|FW|FWD|RES|ENCAMINHAR)\s*:\s*)+/i, '').trim() || '(sem assunto)';
+  const normAssuntoCaso = s => clean(s).replace(/^((RE|ENC|FW|FWD|RES|ENCAMINHAR|ASSUNTO)\s*:\s*)+/i, '').trim() || '(sem assunto)';
+  // assunto "específico" = provavelmente identifica um pedido único (tem número/protocolo ou é longo)
+  const especifico = s => { const t = String(s || ''); if (t === '(sem assunto)') return false; return /\d{4,}/.test(t) || t.length >= 40 || t.split(/\s+/).length >= 7; };
 
   // rows: array de objetos (cabeçalho -> valor). snapDate: 'YYYY-MM-DD'
   function processRows(rows, carteiras, snapDate) {
@@ -297,7 +328,7 @@ const CORE = (() => {
   // utf-8 -> base64 (para a API do GitHub)
   const utf8b64 = str => b64(new TextEncoder().encode(str));
 
-  return { DEFAULT_CARTEIRAS, COLS, processRows, sheetToRows, guessDateFromName, historyEntry, encrypt, decrypt, utf8b64, faixa, days };
+  return { normAssuntoCaso, especifico, DEFAULT_CARTEIRAS, COLS, processRows, sheetToRows, guessDateFromName, historyEntry, encrypt, decrypt, utf8b64, faixa, days };
 })();
 if (typeof module !== 'undefined') module.exports = CORE;
 
@@ -313,13 +344,64 @@ const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': 
 const brDate = iso => iso ? iso.slice(8, 10) + '/' + iso.slice(5, 7) + '/' + iso.slice(0, 4) : '—';
 const mesLbl = ym => MESES[+ym.slice(5, 7) - 1] + '/' + ym.slice(2, 4);
 const toast = m => { const t = $('#toast'); t.textContent = m; t.classList.add('on'); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('on'), 1800); };
-const done = (() => { let o = {}; try { o = JSON.parse(localStorage.getItem('cobrado') || '{}'); } catch (e) {} return { has: n => !!o[n], set: (n, v) => { if (v) o[n] = Date.now(); else delete o[n]; try { localStorage.setItem('cobrado', JSON.stringify(o)); } catch (e) {} } }; })();
-function diasColor(d) { return d == null ? '#eef2f8' : d <= 5 ? '#c9f2df' : d <= 20 ? '#f6efb0' : d <= 60 ? '#fbc8b4' : '#f59c7c'; }
-function slaBar(list) {
-  const t = list.length || 1; const c = { '1-5': 0, '6-20': 0, '>20': 0 };
-  list.forEach(o => c[o.fx] = (c[o.fx] || 0) + 1);
-  return `<div class="sla"><i class="c1" style="width:${c['1-5'] / t * 100}%"></i><i class="c2" style="width:${c['6-20'] / t * 100}%"></i><i class="c3" style="width:${c['>20'] / t * 100}%"></i></div>`;
+const MARKS_PATH = 'data/marks.enc';
+const who = () => { try { return localStorage.getItem('who') || ''; } catch (e) { return ''; } };
+// Marcações de "cobrada" compartilhadas: gravadas criptografadas no repositório (data/marks.enc)
+const M = {
+  data: {}, pend: new Map(), timer: null, busy: false,
+  has(k) { return !!this.data[k]; }, get(k) { return this.data[k]; },
+  set(k, v) {
+    if (v) this.data[k] = { by: who() || 'anônimo', at: new Date().toISOString() }; else delete this.data[k];
+    this.pend.set(k, this.data[k] || null); st('salvando…'); clearTimeout(this.timer); this.timer = setTimeout(() => this.flush(), 1200);
+  },
+  async load() {
+    try {
+      let raw = null;
+      if (GH.token) { const cur = await GH.read(MARKS_PATH); raw = cur && cur.raw; }
+      else { const r = await fetch(MARKS_PATH + '?v=' + Date.now(), { cache: 'no-store' }); if (r.ok) raw = await r.text(); }
+      const remote = raw ? (await CORE.decrypt(raw, S.pass)).marks || {} : {};
+      for (const [k, v] of this.pend) v ? remote[k] = v : delete remote[k];
+      this.data = remote; paintMarks();
+    } catch (e) { console.warn('marks', e); }
+  },
+  async flush() {
+    if (!this.pend.size || this.busy) return;
+    if (!GH.token) { st('sem token: marcação não foi salva'); toast('Sem token do GitHub configurado no Admin: a marcação não foi gravada.'); return; }
+    this.busy = true; const ops = new Map(this.pend); this.pend.clear();
+    for (let t = 0; t < 5; t++) {
+      try {
+        const cur = await GH.read(MARKS_PATH);
+        const remote = cur ? (await CORE.decrypt(cur.raw, S.pass)).marks || {} : {};
+        for (const [k, v] of ops) v ? remote[k] = v : delete remote[k];
+        await GH.write(MARKS_PATH, await CORE.encrypt({ marks: remote }, S.pass), cur && cur.sha, `Cobrança: ${ops.size} marcação(ões) por ${who() || 'anônimo'}`);
+        for (const [k, v] of this.pend) v ? remote[k] = v : delete remote[k];
+        this.data = remote; paintMarks(); st('✓ salvo ' + new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }));
+        this.busy = false; if (this.pend.size) this.flush(); return;
+      } catch (e) {
+        if ([409, 422].includes(e.status) && t < 4) { await new Promise(r => setTimeout(r, 600 + Math.random() * 900)); continue; }
+        for (const [k, v] of ops) if (!this.pend.has(k)) this.pend.set(k, v);
+        st('erro ao salvar'); toast('Erro ao salvar marcação: ' + e.message); break;
+      }
+    }
+    this.busy = false;
+  }
+};
+const st = m => { const e = $('#saveSt'); if (e) e.textContent = m; };
+function markInfo(k) { const m = M.get(k); return m ? `✓ cobrada por ${esc(m.by)} em ${new Date(m.at).toLocaleDateString('pt-BR')}` : ''; }
+function paintMarks() {
+  document.querySelectorAll('.task[data-k]').forEach(t => {
+    const k = t.dataset.k, on = M.has(k);
+    t.classList.toggle('done', on); t.querySelector('.chk input').checked = on; t.querySelector('.by').innerHTML = markInfo(k);
+  });
 }
+function diasColor(d) { return d == null ? '#eef2f8' : d <= 5 ? '#c9f2df' : d <= 20 ? '#f6efb0' : d <= 60 ? '#fbc8b4' : '#f59c7c'; }
+function segCounts(list) { const c = { a: 0, b: 0, c: 0, f: 0 }; list.forEach(o => o.f ? c.f++ : o.fx === '1-5' ? c.a++ : o.fx === '6-20' ? c.b++ : c.c++); return c; }
+function segBar(list, max) {
+  const c = segCounts(list); max = max || 1;
+  const seg = (n, cl, t) => n ? `<i class="${cl}" style="width:${n / max * 100}%" title="${t}: ${n}">${n / max > .045 ? n : ''}</i>` : '';
+  return `<div class="track">${seg(c.a, 'c1', '1 a 5 dias')}${seg(c.b, 'c2', '6 a 20 dias')}${seg(c.c, 'c3', 'Mais de 20 dias')}${seg(c.f, 'cF', 'Só falta fechar')}</div>`;
+}
+const legendHTML = () => `<div class="legend">${FX.map(([k, l, c]) => `<span><i style="background:${c}"></i>${l}</span>`).join('')}<span><i style="background:var(--fe)"></i>Só falta fechar</span></div>`;
 function groupBy(list, fn) { const m = new Map(); for (const o of list) { const k = fn(o); if (!m.has(k)) m.set(k, []); m.get(k).push(o); } return m; }
 function owners(c) {
   const cfg = (S.db.config.donos || {})[c]; if (cfg) return cfg;
@@ -338,12 +420,30 @@ async function login(pass) {
   const db = await CORE.decrypt(txt, pass);
   S.pass = pass; loadDB(db);
   try { sessionStorage.setItem('k', pass); } catch (e) {}
+  M.load(); clearInterval(S.poll); S.poll = setInterval(() => { if (!document.hidden && !M.pend.size) M.load(); }, 60000);
   $('#login').classList.add('hidden'); $('#app').classList.remove('hidden');
   renderAll();
 }
+const DUP = 'POSSÍVEIS DUPLICADAS';
 function loadDB(db) {
   db.config = db.config || {}; db.history = db.history || [];
   S.db = db; S.rows = (db.latest && db.latest.rows) || [];
+  S.rows.forEach(o => { o.acn = CORE.normAssuntoCaso(o.ac); o.k = o.n + '|' + (o.d || ''); });
+  // grupos de possíveis duplicadas: mesma nota OU mesmo assunto do caso bem específico
+  const p = S.rows.map((_, i) => i), f = i => p[i] === i ? i : (p[i] = f(p[i]));
+  const link = keyFn => { const m = new Map(); S.rows.forEach((o, i) => { const k = keyFn(o); if (k == null) return; m.has(k) ? p[f(i)] = f(m.get(k)) : m.set(k, i); }); };
+  link(o => o.n); link(o => CORE.especifico(o.acn) ? o.acn.toLowerCase() : null);
+  const g = groupBy(S.rows.map((o, i) => [o, f(i)]), x => x[1]);
+  S.dupGroups = new Map();
+  for (const [id, l] of g) {
+    const list = l.map(x => x[0]);
+    if (list.length < 2 || list.every(o => o.f)) { list.forEach(o => { o.dg = null; o.cat = o.as; }); continue; }
+    const notas = new Set(list.map(o => o.n));
+    const cnt = groupBy(list, o => o.acn); const label = [...cnt.entries()].sort((a, b) => b[1].length - a[1].length)[0][0];
+    const info = { id, label, list, mesmaNota: notas.size < list.length, notas: [...notas] };
+    S.dupGroups.set(id, info);
+    list.forEach(o => { o.dg = id; o.cat = o.f ? 'FECHAMENTO' : DUP; });
+  }
 }
 $('#loginForm').addEventListener('submit', async e => {
   e.preventDefault(); const b = $('#loginBtn'); b.disabled = true; b.textContent = 'Abrindo…'; $('#loginErr').textContent = '';
@@ -351,6 +451,8 @@ $('#loginForm').addEventListener('submit', async e => {
   catch (err) { $('#loginErr').textContent = /decrypt|operation/i.test(err.name + err.message) ? 'Palavra-chave incorreta.' : err.message; }
   b.disabled = false; b.textContent = 'Entrar';
 });
+$('#who').value = who();
+$('#who').onchange = e => { try { localStorage.setItem('who', e.target.value.trim()); } catch (x) {} toast('Nome salvo'); };
 $('#logout').onclick = () => { try { sessionStorage.removeItem('k'); } catch (e) {} location.reload(); };
 (async () => { let k = null; try { k = sessionStorage.getItem('k'); } catch (e) {} if (k) { try { await login(k); } catch (e) {} } })();
 
@@ -372,27 +474,48 @@ function renderAll() {
 }
 
 // ======================= TAREFAS =======================
-function filtered(ignoreCart) {
+function filtered(ignoreCart, ignoreFx) {
   const f = S.f, q = f.q.trim().toLowerCase();
   return S.rows.filter(o =>
     (ignoreCart || f.cart === 'ALL' || o.c === f.cart) &&
-    (!f.fx.size || f.fx.has(o.f ? 'FE' : o.fx)) &&
+    (ignoreFx || !f.fx.size || [...f.fx].some(k => k === 'FE' ? o.f : k === 'DUP' ? o.cat === DUP : (!o.f && o.fx === k))) &&
     (!f.mes || (o.d || o.dc || '').slice(0, 7) === f.mes) &&
     (!f.st || o.st === f.st) &&
-    (!f.hideDone || !done.has(o.n)) &&
+    (!f.hideDone || !M.has(o.k)) &&
     (!q || [o.n, o.ac, o.de, o.at, o.pc, o.c, o.as, o.aso].join(' ').toLowerCase().includes(q)));
 }
 function renderTarefas() {
   const el = $('#t-tarefas');
   const carts = (S.db.config.carteiras || CORE.DEFAULT_CARTEIRAS);
   const sts = [...new Set(S.rows.map(o => o.st))].filter(Boolean);
+  const all = filtered(true, true);
+  const byC = carts.map(c => [c, all.filter(o => o.c === c)]);
+  const maxC = Math.max(1, ...byC.map(x => x[1].length));
+  const base = S.f.cart === 'ALL' ? all : all.filter(o => o.c === S.f.cart);
+  const nFx = k => base.filter(o => !o.f && o.fx === k).length;
+  const mini = (k, lbl, v, color) => `<div data-mini="${k}" class="${S.f.fx.has(k) ? 'on' : ''}"><b style="${color ? 'color:' + color : ''}">${v}</b>${lbl}</div>`;
+  const oldest = base.length ? Math.max(...base.map(o => o.dias || 0)) : 0;
   el.innerHTML = `
-    <div class="carts" id="carts"></div>
+    <div class="ov">
+      <div class="panel ovall ${S.f.cart === 'ALL' ? 'on' : ''}" id="ovAll">
+        <h3>${S.f.cart === 'ALL' ? 'Todas as carteiras' : esc(S.f.cart) + ' <small>clique aqui para voltar a ver todas</small>'}</h3>
+        ${S.f.cart !== 'ALL' ? `<div class="note" style="margin:-8px 0 6px">${esc(owners(S.f.cart))}</div>` : ''}
+        <div class="big"><b>${base.length}</b><span>tarefas pendentes</span></div>
+        ${legendHTML()}${segBar(base, base.length || 1)}
+        <div class="minis">
+          ${mini('1-5', '1 a 5 dias', nFx('1-5'), 'var(--g)')}${mini('6-20', '6 a 20 dias', nFx('6-20'), '#a89a00')}${mini('>20', 'mais de 20 dias', nFx('>20'), 'var(--r)')}
+          ${mini('FE', 'só falta fechar', base.filter(o => o.f).length, 'var(--fe)')}${mini('DUP', 'possíveis duplicadas', base.filter(o => o.cat === DUP).length, '#a35200')}
+          <div style="cursor:default"><b>${oldest}d</b>mais antiga</div>
+        </div>
+      </div>
+      <div class="panel"><h3>Por carteira <small>clique para filtrar</small></h3>${legendHTML()}
+        ${byC.map(([c, l]) => `<div class="crow ${S.f.cart === c ? 'on' : ''}" data-c="${esc(c)}"><div class="nm">${esc(c)}<small title="${esc(owners(c))}">${esc(owners(c))}</small></div>${segBar(l, maxC)}<div class="tot">${l.length}</div></div>`).join('')}
+      </div>
+    </div>
     <div class="filters">
       <input type="search" id="q" placeholder="Buscar nota, assunto, descrição, responsável…" value="${esc(S.f.q)}">
-      ${FX.map(([k, l, c]) => `<button class="chip ${S.f.fx.has(k) ? 'on' : ''}" data-fx="${k}"><span class="dot" style="background:${c}"></span>${l}</button>`).join('')}
-      <button class="chip ${S.f.fx.has('FE') ? 'on' : ''}" data-fx="FE"><span class="dot" style="background:var(--fe)"></span>Só fechamento</button>
       <select id="stSel" class="btn"><option value="">Todos status</option>${sts.map(s => `<option ${S.f.st === s ? 'selected' : ''}>${esc(s)}</option>`).join('')}</select>
+      ${[...S.f.fx].map(k => `<button class="chip on" data-rmfx="${esc(k)}">${{ '1-5': '1 a 5 dias', '6-20': '6 a 20 dias', '>20': 'Mais de 20 dias', FE: 'Só fechamento', DUP: 'Possíveis duplicadas' }[k]} ✕</button>`).join('')}
       ${S.f.mes ? `<button class="chip on" id="mesChip">Mês ${mesLbl(S.f.mes)} ✕</button>` : ''}
       <label class="chip"><input type="checkbox" id="hideDone" ${S.f.hideDone ? 'checked' : ''}> Ocultar cobradas</label>
       <button class="btn" id="expAll">Expandir tudo</button>
@@ -400,21 +523,11 @@ function renderTarefas() {
       <span class="count" id="cnt"></span>
     </div>
     <div id="tree"></div>`;
-  // carteiras
-  const all = filtered(true);
-  const card = (k, nm, ow, list) => {
-    const fe = list.filter(o => o.f).length, ol = list.length ? Math.max(...list.map(o => o.dias || 0)) : 0;
-    return `<button class="cart ${S.f.cart === k ? 'on' : ''}" data-c="${esc(k)}">
-      <div class="nm"><span>${esc(nm)}</span><span>${list.length}</span></div>
-      <div class="ow" title="${esc(ow)}">${esc(ow) || '&nbsp;'}</div>${slaBar(list)}
-      <div class="foot"><span>${fe ? `<b style="color:var(--fe)">${fe}</b> p/ fechar` : '&nbsp;'}</span><span>mais antiga: ${ol}d</span></div></button>`;
-  };
-  $('#carts').innerHTML = card('ALL', 'Todas as carteiras', 'Visão geral', all) +
-    carts.map(c => card(c, c, owners(c), all.filter(o => o.c === c))).join('');
-  $('#carts').onclick = e => { const b = e.target.closest('.cart'); if (!b) return; S.f.cart = b.dataset.c; renderTarefas(); };
-  // filtros
+  $('#ovAll').onclick = e => { if (e.target.closest('[data-mini]')) return; S.f.cart = 'ALL'; renderTarefas(); };
+  el.querySelectorAll('.crow').forEach(r => r.onclick = () => { S.f.cart = S.f.cart === r.dataset.c ? 'ALL' : r.dataset.c; renderTarefas(); });
+  el.querySelectorAll('[data-mini]').forEach(m => m.onclick = () => { const k = m.dataset.mini; S.f.fx.has(k) ? S.f.fx.delete(k) : S.f.fx.add(k); renderTarefas(); });
+  el.querySelectorAll('[data-rmfx]').forEach(b => b.onclick = () => { S.f.fx.delete(b.dataset.rmfx); renderTarefas(); });
   let qt; $('#q').oninput = e => { clearTimeout(qt); qt = setTimeout(() => { S.f.q = e.target.value; drawTree(); }, 180); };
-  el.querySelectorAll('[data-fx]').forEach(b => b.onclick = () => { const k = b.dataset.fx; S.f.fx.has(k) ? S.f.fx.delete(k) : S.f.fx.add(k); b.classList.toggle('on'); drawTree(); });
   $('#stSel').onchange = e => { S.f.st = e.target.value; drawTree(); };
   $('#hideDone').onchange = e => { S.f.hideDone = e.target.checked; drawTree(); };
   if ($('#mesChip')) $('#mesChip').onclick = () => { S.f.mes = ''; renderTarefas(); };
@@ -422,34 +535,55 @@ function renderTarefas() {
   $('#colAll').onclick = () => document.querySelectorAll('#tree details').forEach(d => d.open = false);
   drawTree();
 }
+const CAT_ORDER = c => c === 'FECHAMENTO' ? 0 : c === DUP ? 1 : 2;
 function drawTree() {
   const list = filtered(false);
   $('#cnt').textContent = `${list.length} tarefa(s)`;
   if (!list.length) { $('#tree').innerHTML = '<div class="empty">Nenhuma tarefa com esses filtros.</div>'; return; }
-  const g1 = [...groupBy(list, o => o.as).entries()].sort((a, b) => (b[0] === 'FECHAMENTO') - (a[0] === 'FECHAMENTO') || b[1].length - a[1].length);
+  const g1 = [...groupBy(list, o => o.cat).entries()].sort((a, b) => CAT_ORDER(a[0]) - CAT_ORDER(b[0]) || b[1].length - a[1].length);
   const autoOpenL2 = list.length <= 25; const L2 = [];
-  $('#tree').innerHTML = g1.map(([as, items]) => {
-    const g2 = [...groupBy(items, o => o.acn).entries()].sort((a, b) => b[1].length - a[1].length || Math.max(...b[1].map(o => o.dias || 0)) - Math.max(...a[1].map(o => o.dias || 0)));
-    return `<details class="l1 ${as === 'FECHAMENTO' ? 'fe' : ''}" open>
-      <summary><span class="car">▶</span>${esc(as)}${as === 'FECHAMENTO' ? ' <span class="mini" style="font-weight:400">— já tem data de fechamento, só falta fechar no Salesforce</span>' : ''}<span class="n">${items.length}</span>${slaBar(items)}</summary>
-      <div class="l1body">${g2.map(([ac, its]) => {
+  const hint = { FECHAMENTO: 'já tem data de fechamento, só falta fechar no Salesforce', [DUP]: 'mesma nota ou mesmo assunto bem específico: provavelmente é o mesmo pedido' };
+  $('#tree').innerHTML = g1.map(([cat, items]) => {
+    const isDup = cat === DUP;
+    const g2 = [...groupBy(items, o => isDup ? 'g' + o.dg : o.acn).entries()]
+      .sort((a, b) => b[1].length - a[1].length || Math.max(...b[1].map(o => o.dias || 0)) - Math.max(...a[1].map(o => o.dias || 0)));
+    return `<details class="l1 ${cat === 'FECHAMENTO' ? 'fe' : isDup ? 'dup' : ''}" open>
+      <summary><span class="car">▶</span>${esc(cat)}${hint[cat] ? ` <span class="mini" style="font-weight:400">— ${hint[cat]}</span>` : ''}
+        <span class="sumbar">${segBar(items, items.length)}<span class="tt">${items.length}</span></span></summary>
+      <div class="l1body">${g2.map(([key, its]) => {
         const mx = Math.max(...its.map(o => o.dias || 0)); const cs = [...new Set(its.map(o => o.c))];
-        L2.push(its);
-        return `<details class="l2" data-i="${L2.length - 1}" ${autoOpenL2 ? 'open' : ''}><summary><span class="car">▶</span><span class="t" title="${esc(ac)}">${esc(ac)}</span>
-          <span class="mini">${cs.map(esc).join(', ')}</span><span class="dias" style="background:${diasColor(mx)}">${mx}d</span><span class="n">${its.length}</span></summary>
+        let title = its[0].acn, extra = '';
+        if (isDup) {
+          const G = S.dupGroups.get(its[0].dg); title = G.label;
+          const notas = [...new Set(its.map(o => o.n))];
+          extra = `<span class="tag dup">${notas.length === 1 ? 'mesma nota ' + esc(notas[0]) : notas.length + ' notas'}</span>`;
+          const fe = G.list.filter(o => o.f);
+          if (fe.length) extra += `<span class="tag fe" title="Outras tarefas do mesmo grupo já com data de fechamento">+${fe.length} em FECHAMENTO</span>`;
+        }
+        L2.push({ its, dupId: isDup ? its[0].dg : null });
+        return `<details class="l2" data-i="${L2.length - 1}" ${autoOpenL2 ? 'open' : ''}><summary><span class="car">▶</span><span class="t" title="${esc(title)}">${esc(title)}</span>
+          ${extra}<span class="mini">${cs.map(esc).join(', ')}</span><span class="dias" style="background:${diasColor(mx)}">${mx}d</span><span class="n">${its.length}</span></summary>
           <div class="tasks" data-lazy="1"></div></details>`;
       }).join('')}</div></details>`;
   }).join('');
-  // conteúdo lazy (renderiza as tarefas só ao abrir o grupo)
   document.querySelectorAll('#tree details.l2').forEach(d => {
-    const fill = () => { const box = d.querySelector('.tasks'); if (box.dataset.lazy) { box.innerHTML = L2[+d.dataset.i].slice().sort((a, b) => (b.dias || 0) - (a.dias || 0)).map(taskHTML).join(''); delete box.dataset.lazy; } };
+    const fill = () => {
+      const box = d.querySelector('.tasks'); if (!box.dataset.lazy) return; delete box.dataset.lazy;
+      const { its, dupId } = L2[+d.dataset.i];
+      let html = its.slice().sort((a, b) => (b.dias || 0) - (a.dias || 0)).map(taskHTML).join('');
+      if (dupId != null) {
+        const fe = S.dupGroups.get(dupId).list.filter(o => o.f);
+        if (fe.length) html += `<div class="note" style="margin-top:4px">Mesmo grupo, já em FECHAMENTO:</div>` + fe.map(taskHTML).join('');
+      }
+      box.innerHTML = html;
+    };
     if (d.open) fill(); d.addEventListener('toggle', () => d.open && fill());
   });
 }
 function taskHTML(o) {
-  const long = o.de.length > 220;
-  return `<div class="task ${done.has(o.n) ? 'done' : ''}" data-n="${o.n}">
-    <div class="chk"><input type="checkbox" title="Marcar como cobrada (só neste navegador)" ${done.has(o.n) ? 'checked' : ''}></div>
+  const long = o.de.length > 220, on = M.has(o.k);
+  return `<div class="task ${on ? 'done' : ''}" data-k="${esc(o.k)}">
+    <div class="chk"><input type="checkbox" title="Marcar como cobrada (todos veem)" ${on ? 'checked' : ''}></div>
     <div>
       <div class="trow">
         <button class="nota" title="Copiar número">${esc(o.n)}</button>
@@ -459,10 +593,11 @@ function taskHTML(o) {
         ${o.f ? `<span class="tag fe">Fechamento ${brDate(o.df)}</span>` : ''}
         ${o.st && o.st !== 'Pendente' ? `<span class="tag st">${esc(o.st)}</span>` : ''}
         ${o.pr && o.pr !== 'Normal' ? `<span class="tag hi">${esc(o.pr)}</span>` : ''}
-        ${o.f && o.aso ? `<span class="tag">${esc(o.aso)}</span>` : ''}
+        ${(o.f || o.cat === DUP) && o.aso ? `<span class="tag">${esc(o.aso)}</span>` : ''}
+        <span class="by">${markInfo(o.k)}</span>
       </div>
       <div class="tsub">Atribuído: <b>${esc(o.at)}</b> · Proprietário do caso: ${esc(o.pc)} · Caso aberto ${brDate(o.dc)}</div>
-      ${o.ac !== o.acn ? `<div class="tsub">Assunto original: ${esc(o.ac)}</div>` : ''}
+      ${o.cat === DUP || o.ac !== o.acn ? `<div class="tsub">Assunto do caso: ${esc(o.ac)}</div>` : ''}
       <div class="desc ${long ? '' : 'open'}">${esc(o.de) || '<i>(sem descrição)</i>'}</div>
       ${long ? '<button class="more">ver mais</button>' : ''}
     </div></div>`;
@@ -472,19 +607,17 @@ document.addEventListener('click', e => {
   if (e.target.matches('.more')) { const d = e.target.previousElementSibling; d.classList.toggle('open'); e.target.textContent = d.classList.contains('open') ? 'ver menos' : 'ver mais'; }
 });
 document.addEventListener('change', e => {
-  if (e.target.matches('.task .chk input')) { const t = e.target.closest('.task'); done.set(t.dataset.n, e.target.checked); t.classList.toggle('done', e.target.checked); }
+  if (e.target.matches('.task .chk input')) {
+    if (!who()) { const n = prompt('Seu nome (aparece para quem ver a marcação):'); if (n && n.trim()) { try { localStorage.setItem('who', n.trim()); } catch (x) {} $('#who').value = n.trim(); } }
+    const t = e.target.closest('.task'); M.set(t.dataset.k, e.target.checked); paintMarks();
+  }
 });
 
 // ======================= ANÁLISE =======================
 function stackedBars(groups, onClickAttr) {
   const max = Math.max(1, ...groups.map(g => g[1].length));
-  return `<div class="legend">${FX.map(([k, l, c]) => `<span><i style="background:${c}"></i>${l}</span>`).join('')}<span><i style="background:var(--fe)"></i>Fechamento</span></div>
-  <div class="bars">${groups.map(([k, list]) => {
-    const c = { a: 0, b: 0, c: 0, f: 0 }; list.forEach(o => o.f ? c.f++ : o.fx === '1-5' ? c.a++ : o.fx === '6-20' ? c.b++ : c.c++);
-    const w = n => n / max * 100;
-    const seg = (n, cl) => n ? `<i class="${cl}" style="width:${w(n)}%">${n / max > .04 ? n : ''}</i>` : '';
-    return `<div class="row" ${onClickAttr ? `${onClickAttr}="${esc(k)}" style="cursor:pointer"` : ''}><div class="lbl" title="${esc(k)}">${esc(k)}</div><div class="track">${seg(c.a, 'c1')}${seg(c.b, 'c2')}${seg(c.c, 'c3')}${seg(c.f, 'cF')}</div><div class="tot">${list.length}</div></div>`;
-  }).join('')}</div>`;
+  return `${legendHTML()}<div class="bars">${groups.map(([k, list]) =>
+    `<div class="row" ${onClickAttr ? `${onClickAttr}="${esc(k)}" style="cursor:pointer"` : ''}><div class="lbl" title="${esc(k)}">${esc(k)}</div>${segBar(list, max)}<div class="tot">${list.length}</div></div>`).join('')}</div>`;
 }
 function renderAnalise() {
   const R = S.rows, n = R.length || 1;
@@ -612,25 +745,32 @@ function renderEvolucao() {
 // ======================= ADMIN =======================
 const GH = {
   get cfg() {
-    const host = location.hostname.endsWith('github.io') ? location.hostname.split('.')[0] : '';
-    const repo = location.hostname.endsWith('github.io') ? location.pathname.split('/')[1] : '';
-    let st = {}; try { st = JSON.parse(localStorage.getItem('ghcfg') || '{}'); } catch (e) {}
-    return { owner: st.owner || host || 'LCEQTL', repo: st.repo || repo || 'Tarefas-SALESFORCE', token: st.token || sessionStorage.getItem('ght') || '' };
+    const g = (S.db && S.db.config.gh) || {};
+    const onPages = location.hostname.endsWith('github.io');
+    let tok = ''; try { tok = localStorage.getItem('ghtok') || ''; } catch (e) {}
+    return { owner: g.owner || (onPages ? location.hostname.split('.')[0] : 'LCEQTL'), repo: g.repo || (onPages ? location.pathname.split('/')[1] : 'Tarefas-SALESFORCE'), token: g.token || tok };
   },
-  async api(path, opt = {}) {
-    const c = this.cfg; if (!c.token) throw new Error('Informe o token do GitHub.');
-    const r = await fetch(`https://api.github.com/repos/${c.owner}/${c.repo}${path}`, { ...opt, headers: { Authorization: 'Bearer ' + c.token, Accept: 'application/vnd.github+json', ...(opt.headers || {}) } });
-    if (!r.ok) { let m = ''; try { m = (await r.json()).message; } catch (e) {} throw new Error(`GitHub ${r.status}: ${m}`); }
+  get token() { return this.cfg.token; },
+  async api(path, opt = {}, tokenOverride) {
+    const c = this.cfg, tk = tokenOverride || c.token; if (!tk) throw new Error('Nenhum token do GitHub configurado (aba Admin).');
+    const r = await fetch(`https://api.github.com/repos/${c.owner}/${c.repo}${path}`, { cache: 'no-store', ...opt, headers: { Authorization: 'Bearer ' + tk, Accept: 'application/vnd.github+json', ...(opt.headers || {}) } });
+    if (!r.ok) { let m = ''; try { m = (await r.json()).message; } catch (e) {} const err = new Error(`GitHub ${r.status}: ${m}`); err.status = r.status; throw err; }
     return r;
   },
-  async readDB() {
-    const meta = await (await this.api(`/contents/${DB_PATH}?ref=main&t=${Date.now()}`)).json();
-    const raw = await (await this.api(`/contents/${DB_PATH}?ref=main&t=${Date.now()}`, { headers: { Accept: 'application/vnd.github.raw' } })).text();
+  async read(path) { // {sha, raw} ou null se não existe
+    let meta;
+    try { meta = await (await this.api(`/contents/${path}?ref=main&t=${Date.now()}`)).json(); }
+    catch (e) { if (e.status === 404) return null; throw e; }
+    let raw;
+    if (meta.content && meta.encoding === 'base64') raw = new TextDecoder().decode(Uint8Array.from(atob(meta.content.replace(/\s/g, '')), c => c.charCodeAt(0)));
+    else raw = await (await this.api(`/contents/${path}?ref=main&t=${Date.now()}`, { headers: { Accept: 'application/vnd.github.raw' } })).text();
     return { sha: meta.sha, raw };
   },
-  async writeDB(text, sha, msg) {
-    return (await this.api(`/contents/${DB_PATH}`, { method: 'PUT', body: JSON.stringify({ message: msg, content: CORE.utf8b64(text), sha, branch: 'main' }) })).json();
-  }
+  async write(path, text, sha, msg) {
+    return (await this.api(`/contents/${path}`, { method: 'PUT', body: JSON.stringify({ message: msg, content: CORE.utf8b64(text), branch: 'main', ...(sha ? { sha } : {}) }) })).json();
+  },
+  async readDB() { const r = await this.read(DB_PATH); if (!r) throw new Error('data/db.enc não encontrado no repositório'); return r; },
+  async writeDB(text, sha, msg) { return this.write(DB_PATH, text, sha, msg); }
 };
 let XLSXlib = null;
 async function loadXLSX() {
@@ -651,12 +791,12 @@ function renderAdmin() {
       <div class="log hidden" id="log"></div>
     </div>
     <div class="panel form"><h3>2 · Acesso ao GitHub</h3>
+      <p class="note" style="margin:0">${c.token ? `✓ Token configurado (…${esc(c.token.slice(-4))})${S.db.config.gh && S.db.config.gh.token ? ', guardado na base criptografada: <b>quem tem a palavra-chave publica e marca cobranças sem colar token</b>.' : ', só neste navegador.'}` : '<b style="color:#b42318">Nenhum token configurado.</b> Sem ele não dá para publicar nem gravar as marcações de cobrança.'}</p>
       <label>Usuário / organização</label><input type="text" id="ghOwner" value="${esc(c.owner)}">
       <label>Repositório</label><input type="text" id="ghRepo" value="${esc(c.repo)}">
-      <label>Token (fine-grained, permissão <i>Contents: Read and write</i> só neste repo)</label><input type="password" id="ghTok" value="${esc(c.token)}" placeholder="github_pat_…" autocomplete="off">
-      <label style="font-weight:400;display:flex;gap:6px;align-items:center"><input type="checkbox" id="ghRem" ${(() => { try { return JSON.parse(localStorage.getItem('ghcfg') || '{}').token ? 'checked' : ''; } catch (e) { return ''; } })()}> Lembrar neste navegador (senão vale só até fechar a aba)</label>
-      <div style="margin-top:10px;display:flex;gap:8px"><button class="btn" id="ghSave">Salvar</button><button class="btn" id="ghTest">Testar acesso</button></div>
-      <p class="note">O token nunca vai para o repositório: fica só neste navegador.</p>
+      <label>Token novo (fine-grained, só este repo, permissão <i>Contents: Read and write</i>)</label><input type="password" id="ghTok" placeholder="github_pat_… (deixe vazio para manter o atual)" autocomplete="off">
+      <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn pri" id="ghSave">Gravar na base (criptografado)</button><button class="btn" id="ghTest">Testar acesso</button>${S.db.config.gh && S.db.config.gh.token ? '<button class="btn" id="ghDel">Remover token da base</button>' : ''}</div>
+      <p class="note">O token fica dentro de <code>data/db.enc</code>, cifrado com a palavra-chave. Sem a palavra-chave ninguém o lê; com ela, a pessoa consegue gravar neste repositório (por isso use um token restrito a ele).</p>
     </div>
   </div>
   <div class="grid2">
@@ -677,15 +817,28 @@ function renderAdmin() {
   </div>`;
   const log = m => { const l = $('#log'); l.classList.remove('hidden'); l.textContent += m + '\n'; l.scrollTop = 1e9; };
   // GitHub cfg
-  $('#ghSave').onclick = () => {
-    const v = { owner: $('#ghOwner').value.trim(), repo: $('#ghRepo').value.trim(), token: $('#ghTok').value.trim() };
-    try {
-      if ($('#ghRem').checked) { localStorage.setItem('ghcfg', JSON.stringify(v)); sessionStorage.removeItem('ght'); }
-      else { localStorage.setItem('ghcfg', JSON.stringify({ owner: v.owner, repo: v.repo })); sessionStorage.setItem('ght', v.token); }
-    } catch (e) {}
-    toast('Salvo');
+  const saveGh = async (gh) => {
+    const tk = gh.token || GH.token; if (!tk) throw new Error('Informe o token.');
+    const cur = await GH.api(`/contents/${DB_PATH}?ref=main`, {}, tk).then(r => r.json());
+    const raw = await (await GH.api(`/contents/${DB_PATH}?ref=main&t=${Date.now()}`, { headers: { Accept: 'application/vnd.github.raw' } }, tk)).text();
+    const db = await CORE.decrypt(raw, S.pass); db.config = db.config || {};
+    db.config.gh = gh.token === null ? { owner: gh.owner, repo: gh.repo } : { owner: gh.owner, repo: gh.repo, token: tk };
+    await GH.api(`/contents/${DB_PATH}`, { method: 'PUT', body: JSON.stringify({ message: 'Configuração de acesso', content: CORE.utf8b64(await CORE.encrypt(db, S.pass)), sha: cur.sha, branch: 'main' }) }, tk);
+    loadDB(db); renderAll(); goTab('admin');
   };
-  $('#ghTest').onclick = async () => { $('#ghSave').click(); try { const r = await (await GH.api('')).json(); toast('OK: ' + r.full_name + (r.permissions?.push ? ' (pode gravar)' : ' (sem permissão de gravação!)')); } catch (e) { toast(e.message); } };
+  $('#ghSave').onclick = async () => {
+    try { await saveGh({ owner: $('#ghOwner').value.trim(), repo: $('#ghRepo').value.trim(), token: $('#ghTok').value.trim() }); toast('Token gravado na base'); }
+    catch (e) { toast(e.message); }
+  };
+  if ($('#ghDel')) $('#ghDel').onclick = async () => {
+    if (!confirm('Remover o token da base? Depois disso só publica quem colar um token.')) return;
+    try { try { localStorage.setItem('ghtok', GH.token); } catch (x) {} await saveGh({ owner: GH.cfg.owner, repo: GH.cfg.repo, token: null }); try { localStorage.removeItem('ghtok'); } catch (x) {} toast('Token removido da base'); }
+    catch (e) { toast(e.message); }
+  };
+  $('#ghTest').onclick = async () => {
+    const tk = $('#ghTok').value.trim() || GH.token;
+    try { const r = await (await GH.api('', {}, tk)).json(); toast('OK: ' + r.full_name + (r.permissions && r.permissions.push ? ' (pode gravar)' : ' (sem permissão de gravação!)')); } catch (e) { toast(e.message); }
+  };
   // upload
   const drop = $('#drop'), file = $('#file');
   drop.onclick = () => file.click();
@@ -762,7 +915,10 @@ function renderAdmin() {
     if (a.length < 6) return toast('Use pelo menos 6 caracteres'); if (a !== b2) return toast('As palavras-chave não conferem');
     try {
       const cur = await GH.readDB(); const db = await CORE.decrypt(cur.raw, S.pass);
+      const mk = await GH.read(MARKS_PATH); let marks = null;
+      if (mk) marks = await CORE.decrypt(mk.raw, S.pass);
       await GH.writeDB(await CORE.encrypt(db, a), cur.sha, 'Troca de palavra-chave');
+      if (mk) await GH.write(MARKS_PATH, await CORE.encrypt(marks, a), mk.sha, 'Troca de palavra-chave (marcações)');
       S.pass = a; try { sessionStorage.setItem('k', a); } catch (e) {} toast('Palavra-chave trocada');
     } catch (e) { toast(e.message); }
   };
